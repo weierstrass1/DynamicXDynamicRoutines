@@ -1,6 +1,3 @@
-;Variables, etc.
-incsrc "Template.asm"
-
 namespace DynamicPoseHashmap
 ;-----------------------------------------------------
 ;             DynamicPoseHashmap.FindPose
@@ -20,7 +17,7 @@ pullpc
 ;-- SALIDA:
 ;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
-DynamicPoseHashmap_FindPose:
+FindPose:
 		;getHashCode
 		STY.W PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
 	SEP #$10 ;XY -> 8
@@ -37,7 +34,7 @@ DynamicPoseHashmap_FindPose:
 		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
 		CMP.B PoseIDBackup ;z = (A == PoseIDBackup)
 	SEP #$20 ;A->8
-	BEQ DynamicPoseHashmap_ReturnHashIndexAndTrue ;slot.ID == id
+	BEQ ReturnHashIndexAndTrue ;slot.ID == id
 
 	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BNE .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
 	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
@@ -57,7 +54,7 @@ RTL
 BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
-DynamicPoseHashmap_ReturnHashIndexAndTrue:
+ReturnHashIndexAndTrue:
 	TXA : LSR : STA.B HashIndexBackup : SEC
 RTL
 
@@ -71,7 +68,7 @@ RTL
 ;-- SALIDA:
 ;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
-DynamicPoseHashmap_FindFreeSpace:
+FindFreeSpace:
 	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS .ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
 
 	;X = hashmapIndex * 2
@@ -80,7 +77,7 @@ DynamicPoseHashmap_FindFreeSpace:
 	REP #$20 ;A->16
 		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF ;z = if (slot is null)
 	SEP #$20 ;A->8
-	BEQ DynamicPoseHashmap_ReturnHashIndexAndTrue
+	BEQ ReturnHashIndexAndTrue
 
 	;Seguir la busqueda
 	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
@@ -89,6 +86,4 @@ BRA .hashLoop
 .ReturnFalseCarryClear
 	CLC
 RTL
-
-;Fin
 namespace off

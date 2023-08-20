@@ -33,3 +33,6 @@ namespace off
 
 ;bank
 org $008000
+
+;Projecto
+incsrc "HashMap.asm"
