@@ -8,6 +8,23 @@ namespace nested on
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
 !DEBUG = 1
 
+;Macros
+macro ReturnLongShortDBG()
+    if !DEBUG != 0
+        RTL
+    else
+        RTS
+    endif
+endmacro
+
+macro CallFunctionLongShortDBG(func)
+    if !DEBUG != 0
+        JSL <func>
+    else
+        JSR <func>
+    endif
+endmacro
+
 ;Variables
 org $7F0000
 !Base1 = $3000 ;de SA-1, base directpage

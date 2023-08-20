@@ -104,7 +104,7 @@ Add:
 	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
 	LDA.L DX_Dynamic_Pose_HashSize,X : INC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]++;
 	LDA.L DX_Dynamic_Pose_Length : INC A : STA.L DX_Dynamic_Pose_Length ;Length++;
-RTL
+%ReturnLongShortDBG()
 
 ;-----------------------------------------------------
 ;                DynamicPoseHashmap.Remove
@@ -125,6 +125,6 @@ Remove:
 	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
 	LDA.L DX_Dynamic_Pose_HashSize,X : DEC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]--
 	LDA.L DX_Dynamic_Pose_Length : DEC A : STA.L DX_Dynamic_Pose_Length ;Length--;
-RTL
+%ReturnLongShortDBG()
 
 namespace off
