@@ -3,6 +3,8 @@ math pri on
 !INCREASE_PER_STEP = 15
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
 
+!Base1 = $3000 ;de SA-1, base directpage
+
 namespace DX
 	Timer: skip 2
 	namespace Dynamic
@@ -26,10 +28,11 @@ namespace DX
 namespace off
 
 ;Scratch RAM
-org $0000
+pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1)
 HashCodeBackup: skip 1
 PoseIDBackup: skip 2
 HashSizeBackup: skip 1
+pullpc
 
 ;ASUMIENDO
 ;Y (16-bit), $01 = Pose ID (16-bit)
@@ -39,7 +42,7 @@ HashSizeBackup: skip 1
 ;Deuelve Carry clear si no se encontro y Carry set si se encontro
 FindPose:
 		;getHashCode
-		STY.B PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
+		STY.W PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
 	SEP #$10 ;XY -> 8
 	STA.B HashCodeBackup : TAX
 
