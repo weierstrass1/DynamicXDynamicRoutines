@@ -54,6 +54,7 @@ RTL
 BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
+;este label es tambien utilizado en FindFreeSpace para devolver el slot que se encontro.
 ReturnHashIndexAndTrue:
 	TXA : LSR : STA.B HashIndexBackup : SEC
 RTL
