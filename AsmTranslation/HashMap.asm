@@ -1,7 +1,7 @@
 namespace DynamicPoseHashmap
-;-----------------------------------------------------
-;             DynamicPoseHashmap.FindPose
-;-----------------------------------------------------
+;-----------------------------------------------------------------------------------------
+;             DynamicPoseHashmap.FindPose     JSL DynamicPoseHashmap_FindPose
+;-----------------------------------------------------------------------------------------
 ;-- Scratch
 pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
 	HashCodeBackup: skip 1
@@ -59,9 +59,9 @@ ReturnHashIndexAndTrue:
 	TXA : LSR : STA.B HashIndexBackup : SEC
 RTL
 
-;-----------------------------------------------------
-;          DynamicPoseHashmap.FindFreeSpace
-;-----------------------------------------------------
+;---------------------------------------------------------------------------------------------
+;          DynamicPoseHashmap.FindFreeSpace     JSL DynamicPoseHashmap_FindFreeSpace
+;---------------------------------------------------------------------------------------------
 ;-- ENTRADA:
 ;AXY -> 8-bit
 ;X = hashmapIndex
@@ -70,7 +70,7 @@ RTL
 ;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
 FindFreeSpace:
-	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS .ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
+	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS FindPose_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
 
 	;X = hashmapIndex * 2
 	TXA : ASL : TAX
@@ -84,13 +84,9 @@ FindFreeSpace:
 	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
 BRA .hashLoop
 
-.ReturnFalseCarryClear
-	CLC
-RTL
-
-;-----------------------------------------------------
-;                DynamicPoseHashmap.Add
-;-----------------------------------------------------
+;------------------------------------------------------------------------------------------------------------
+;                DynamicPoseHashmap.Add     %CallFunctionLongShortDBG(DynamicPoseHashmap_Add)
+;------------------------------------------------------------------------------------------------------------
 ;-- ENTRADA:
 ;A -> 16-bit, XY -> 8-bit
 ;A = Pose ID (16-bit)
@@ -106,9 +102,9 @@ Add:
 	LDA.L DX_Dynamic_Pose_Length : INC A : STA.L DX_Dynamic_Pose_Length ;Length++;
 %ReturnLongShortDBG()
 
-;-----------------------------------------------------
-;                DynamicPoseHashmap.Remove
-;-----------------------------------------------------
+;------------------------------------------------------------------------------------------------------------------
+;                DynamicPoseHashmap.Remove     %CallFunctionLongShortDBG(DynamicPoseHashmap_Remove)
+;------------------------------------------------------------------------------------------------------------------
 ;-- ENTRADA:
 ;XY -> 8-bit
 ;X = hashmapIndex * 2
