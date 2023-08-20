@@ -1,17 +1,21 @@
+;Template para pruebas de asar
+lorom
 math pri on
+namespace nested on
 
+;Defines
 !INCREASE_PER_STEP = 15
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
 
+;Variables
+org $7F0000
 !Base1 = $3000 ;de SA-1, base directpage
-
 namespace DX
 	Timer: skip 2
 	namespace Dynamic
 		;Number of bytes send with DMA during the current SNES Frame
 		CurrentDataSend: skip 2
 		MaxDataPerFrame: skip 2
-		if !DynamicPoses
 		namespace Tile
 			Pose: ;Marked by high bit being set
 			Size: skip 128
@@ -26,3 +30,6 @@ namespace DX
 		namespace off
 	namespace off
 namespace off
+
+;bank
+org $008000

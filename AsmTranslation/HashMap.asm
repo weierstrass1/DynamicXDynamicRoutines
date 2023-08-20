@@ -1,6 +1,7 @@
 ;Variables, etc.
 incsrc "Template.asm"
 
+namespace DynamicPoseHashmap
 ;-----------------------------------------------------
 ;             DynamicPoseHashmap.FindPose
 ;-----------------------------------------------------
@@ -25,8 +26,8 @@ DynamicPoseHashmap_FindPose:
 	SEP #$10 ;XY -> 8
 	STA.B HashCodeBackup : STA.B HashIndexBackup
 
-	LDA.L DX_Dynamic_Pose_Length : BEQ DynamicPoseHashmap_ReturnFalseCarryClear ;if (Length == 0) return false
-	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ DynamicPoseHashmap_ReturnFalseCarryClear ;if (hashSize[hashCode]) return false
+	LDA.L DX_Dynamic_Pose_Length : BEQ .ReturnFalseCarryClear ;if (Length == 0) return false
+	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ .ReturnFalseCarryClear ;if (hashSize[hashCode]) return false
 	STA.B HashSizeBackup
 
 	;X = hashCode * 2
@@ -36,14 +37,14 @@ DynamicPoseHashmap_FindPose:
 		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
 		CMP.B PoseIDBackup ;z = (A == PoseIDBackup)
 	SEP #$20 ;A->8
-	BEQ .found ;slot.ID == id
+	BEQ DynamicPoseHashmap_ReturnHashIndexAndTrue ;slot.ID == id
 
 	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BNE .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
 	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
 ;no se encontro, devolver X / 2 y Carry Clear
 .couldNotBeFound
 	TXA : LSR : STA.B HashIndexBackup
-DynamicPoseHashmap_ReturnFalseCarryClear:
+.ReturnFalseCarryClear
 	CLC
 RTL
 
@@ -71,7 +72,7 @@ RTL
 ;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
 DynamicPoseHashmap_FindFreeSpace:
-	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS DynamicPoseHashmap_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
+	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS .ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
 
 	;X = hashmapIndex * 2
 	TXA : ASL : TAX
@@ -84,3 +85,10 @@ DynamicPoseHashmap_FindFreeSpace:
 	;Seguir la busqueda
 	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
 BRA .hashLoop
+
+.ReturnFalseCarryClear
+	CLC
+RTL
+
+;Fin
+namespace off
