@@ -1,34 +1,8 @@
-math pri on
-
-!INCREASE_PER_STEP = 15
-!HASHMAP_SIZE = 128 ;tiene que ser factor de 2
-
-!Base1 = $3000 ;de SA-1, base directpage
-
-namespace DX
-	Timer: skip 2
-	namespace Dynamic
-		;Number of bytes send with DMA during the current SNES Frame
-		CurrentDataSend: skip 2
-		MaxDataPerFrame: skip 2
-		if !DynamicPoses
-		namespace Tile
-			Pose: ;Marked by high bit being set
-			Size: skip 128
-			Offset: skip 128
-		namespace off
-		namespace Pose
-			Length: skip 1
-			HashSize: skip !HASHMAP_SIZE ;Elements with same hash value
-			Offset: skip !HASHMAP_SIZE ;VRAM Offset of the Pose
-			TimeLastUse: skip !HASHMAP_SIZE ;SNES Frames since the last time that the pose was used
-			ID: skip !HASHMAP_SIZE*2 ;Current Pose ID that was loaded to VRAM
-		namespace off
-	namespace off
-namespace off
+;Variables, etc.
+incsrc "Template.asm"
 
 ;Scratch RAM
-pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1)
+pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
 HashCodeBackup: skip 1
 HashIndexBackup: skip 1
 PoseIDBackup: skip 2
@@ -60,22 +34,27 @@ FindPose:
 	SEP #$20 ;A->8
 	BEQ .found ;slot.ID == id
 
-	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BEQ .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
+	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BNE .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
 	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
 ;no se encontro, devolver X / 2 y Carry Clear
 .couldNotBeFound
-	TXA : LSR : STA.b HashIndexBackup
+	TXA : LSR : STA.B HashIndexBackup
 .couldNotBeFoundNotHashing
 	CLC
 RTL
 
+;Incrementar resultado hash y continuar.
 .incrementHashLoopAndContinue
 	SEP #$20 ;A->8
 .incrementHashLoopAndContinue_8bit
-	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE*2)-1 : TAX
+	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2
+	if !HASHMAP_SIZE < 128 ;Optimizacion temporal, si el hashmap es de 128 entradas no es necesario hacer un AND (seria literalmente AND #$FF)
+		AND.B #(!HASHMAP_SIZE*2)-1
+	endif
+	TAX
 BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
 .found
-	TXA : LSR : STA.b HashIndexBackup : SEC
+	TXA : LSR : STA.B HashIndexBackup : SEC
 RTL
