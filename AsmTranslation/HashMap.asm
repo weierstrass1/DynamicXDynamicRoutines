@@ -96,7 +96,9 @@ RTL
 ;A = Pose ID (16-bit)
 ;X = hashmapIndex * 2
 Add:
-		;PHA : LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ + : BRK : + : PLA ;-- TEST: slots[hashmapIndex] is not null
+		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is not null
+			PHA : LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ + : BRK : + : PLA
+		endif
 		STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = slot;
 	SEP #$20
 	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
@@ -113,7 +115,9 @@ RTL
 Remove:
 	REP #$20
 		LDA.L DX_Dynamic_Pose_ID,X
-		;CMP.W #$FFFF : BNE + : BRK : + ;-- TEST: slots[hashmapIndex] is null
+		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is null
+			CMP.W #$FFFF : BNE + : BRK : +
+		endif
 		PHA
 		LDA.W #$FFFF : STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
 		PLA

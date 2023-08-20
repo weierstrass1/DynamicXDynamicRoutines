@@ -6,6 +6,7 @@ namespace nested on
 ;Defines
 !INCREASE_PER_STEP = 15
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
+!DEBUG = 1
 
 ;Variables
 org $7F0000
