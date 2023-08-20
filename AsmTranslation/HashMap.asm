@@ -87,4 +87,40 @@ BRA .hashLoop
 .ReturnFalseCarryClear
 	CLC
 RTL
+
+;-----------------------------------------------------
+;                DynamicPoseHashmap.Add
+;-----------------------------------------------------
+;-- ENTRADA:
+;A -> 16-bit, XY -> 8-bit
+;A = Pose ID (16-bit)
+;X = hashmapIndex * 2
+Add:
+		;PHA : LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ + : BRK : + : PLA ;-- TEST: slots[hashmapIndex] is not null
+		STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = slot;
+	SEP #$20
+	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
+	LDA.L DX_Dynamic_Pose_HashSize,X : INC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]++;
+	LDA.L DX_Dynamic_Pose_Length : INC A : STA.L DX_Dynamic_Pose_Length ;Length++;
+RTL
+
+;-----------------------------------------------------
+;                DynamicPoseHashmap.Remove
+;-----------------------------------------------------
+;-- ENTRADA:
+;XY -> 8-bit
+;X = hashmapIndex * 2
+Remove:
+	REP #$20
+		LDA.L DX_Dynamic_Pose_ID,X
+		;CMP.W #$FFFF : BEQ + : BRK : + ;-- TEST: slots[hashmapIndex] is not null
+		PHA
+		LDA.W #$FFFF : STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
+		PLA
+	SEP #$20
+	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
+	LDA.L DX_Dynamic_Pose_HashSize,X : DEC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]--
+	LDA.L DX_Dynamic_Pose_Length : DEC A : STA.L DX_Dynamic_Pose_Length ;Length--;
+RTL
+
 namespace off
