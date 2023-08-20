@@ -8,7 +8,7 @@ namespace DynamicXDynamicRoutinesTests
     [TestClass]
     public class VRAMMApTests
     {
-        private VRAMMap startVRAMMap(bool withHashMapSlot = true)
+        private static VRAMMap startVRAMMap(bool withHashMapSlot = true)
         {
             DynamicPoseHashmap hashmap = new();
             if (withHashMapSlot)
@@ -99,11 +99,11 @@ namespace DynamicXDynamicRoutinesTests
             {
 
             };
-            ushort TimeSpan = 0;
+            ushort timeSpan = 0;
             var ibox = Args.Ref(adjacent);
 
             Assert.IsFalse((bool)Isolate.Invoke.MethodFromBase<VRAMMap>(vramMap, "checkSpace",
-                i, size, ibox, current, TimeSpan));
+                i, size, ibox, current, timeSpan));
             Assert.AreEqual(current.Offset, 0);
             Assert.IsFalse(ibox.Value);
 
@@ -111,9 +111,9 @@ namespace DynamicXDynamicRoutinesTests
             size = 1;
             adjacent = false;
             ibox = Args.Ref(adjacent);
-            TimeSpan = 5;
+            timeSpan = 5;
             Assert.IsFalse((bool)Isolate.Invoke.MethodFromBase<VRAMMap>(vramMap, "checkSpace",
-                i, size, ibox, current, TimeSpan));
+                i, size, ibox, current, timeSpan));
             Assert.AreEqual(current.Offset, 1);
             Assert.AreEqual(current.Size, 1);
             Assert.AreEqual(current.Score, 0);
@@ -123,9 +123,9 @@ namespace DynamicXDynamicRoutinesTests
             size = 1;
             adjacent = false;
             ibox = Args.Ref(adjacent);
-            TimeSpan = 10;
+            timeSpan = 10;
             Assert.IsTrue((bool)Isolate.Invoke.MethodFromBase<VRAMMap>(vramMap, "checkSpace",
-                i, size, ibox, current, TimeSpan));
+                i, size, ibox, current, timeSpan));
             Assert.AreEqual(current.Offset, 2);
             Assert.AreEqual(current.Size, 1);
             Assert.AreEqual(current.Score, 8);
@@ -135,10 +135,10 @@ namespace DynamicXDynamicRoutinesTests
             size = 2;
             adjacent = false;
             ibox = Args.Ref(adjacent);
-            TimeSpan = 10;
+            timeSpan = 10;
             current = new();
             Assert.IsTrue((bool)Isolate.Invoke.MethodFromBase<VRAMMap>(vramMap, "checkSpace",
-                i, size, ibox, current, TimeSpan));
+                i, size, ibox, current, timeSpan));
             Assert.AreEqual(current.Offset, 2);
             Assert.AreEqual(current.Size, 1);
             Assert.AreEqual(current.Score, 8);
@@ -146,7 +146,7 @@ namespace DynamicXDynamicRoutinesTests
 
             i = 1;
             Assert.IsTrue((bool)Isolate.Invoke.MethodFromBase<VRAMMap>(vramMap, "checkSpace",
-                i, size, ibox, current, TimeSpan));
+                i, size, ibox, current, timeSpan));
             Assert.AreEqual(current.Offset, 1);
             Assert.AreEqual(current.Size, 2);
             Assert.AreEqual(current.Score, 5);
@@ -288,12 +288,12 @@ namespace DynamicXDynamicRoutinesTests
             VRAMMapSlot slot2 = vramMap.Get(2);
             Assert.AreEqual(slot2.Offset, 2);
             Assert.AreEqual(slot2.SizeOrPose, 2);
-            VRAMMapSlot EndSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
-            Assert.AreEqual(EndSlot1.Offset, 3);
-            Assert.AreEqual(EndSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 4) | 0x80);
-            VRAMMapSlot EndSlot2 = vramMap.Get(3);
-            Assert.AreEqual(EndSlot2.Offset, 3);
-            Assert.AreEqual(EndSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 4) | 0x80);
+            VRAMMapSlot endSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
+            Assert.AreEqual(endSlot1.Offset, 3);
+            Assert.AreEqual(endSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 4) | 0x80);
+            VRAMMapSlot endSlot2 = vramMap.Get(3);
+            Assert.AreEqual(endSlot2.Offset, 3);
+            Assert.AreEqual(endSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 4) | 0x80);
 
             Assert.IsNotNull(vramMap.Hashmap.Get(0));
             Assert.IsNotNull(vramMap.Hashmap.Get(1));
@@ -328,12 +328,12 @@ namespace DynamicXDynamicRoutinesTests
                 Score = 0,
                 Size = VRAMMap.VRAMMAP_SIZE
             });
-            VRAMMapSlot EndSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
-            Assert.AreEqual(EndSlot1.Offset, 0);
-            Assert.AreEqual(EndSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
-            VRAMMapSlot EndSlot2 = vramMap.Get(0);
-            Assert.AreEqual(EndSlot2.Offset, 0);
-            Assert.AreEqual(EndSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
+            VRAMMapSlot endSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
+            Assert.AreEqual(endSlot1.Offset, 0);
+            Assert.AreEqual(endSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
+            VRAMMapSlot endSlot2 = vramMap.Get(0);
+            Assert.AreEqual(endSlot2.Offset, 0);
+            Assert.AreEqual(endSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
         }
         [TestMethod]
         public void TestAddPoseInSpace()
@@ -345,15 +345,15 @@ namespace DynamicXDynamicRoutinesTests
                 Score = 0,
                 Size = VRAMMap.VRAMMAP_SIZE
             });
-            VRAMMapSlot EndSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
-            Assert.AreEqual(EndSlot1.Offset, 1);
-            Assert.AreEqual(EndSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
-            VRAMMapSlot EndSlot2 = vramMap.Get(1);
-            Assert.AreEqual(EndSlot2.Offset, 1);
-            Assert.AreEqual(EndSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
-            VRAMMapSlot StartSlot = vramMap.Get(0);
-            Assert.AreEqual(StartSlot.Offset, 0);
-            Assert.AreEqual(StartSlot.SizeOrPose, 0);
+            VRAMMapSlot endSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
+            Assert.AreEqual(endSlot1.Offset, 1);
+            Assert.AreEqual(endSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
+            VRAMMapSlot endSlot2 = vramMap.Get(1);
+            Assert.AreEqual(endSlot2.Offset, 1);
+            Assert.AreEqual(endSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
+            VRAMMapSlot startSlot = vramMap.Get(0);
+            Assert.AreEqual(startSlot.Offset, 0);
+            Assert.AreEqual(startSlot.SizeOrPose, 0);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace DynamicXDynamicRoutinesTests
         [TestMethod]
         public void TestTakeDynamicRequest()
         {
-            Random r = new Random(0);
+            Random r = new(0);
             DynamicPoseHashmap hashmap = new();
             DynamicPoseDataBase poseDataBase = new();
             poseDataBase.ReadData(Path.Combine("TestData", "HeavyTest.asm"));
@@ -48,10 +48,6 @@ namespace DynamicXDynamicRoutinesTests
                 cleaner.Clear();
                 foreach (var spriteSim in spriteSimList)
                 {
-                    if(i == 30 && spriteSim.ID == 19)
-                    {
-                        int a = 0;
-                    }
                     if (spriteSim.PoseID != spriteSim.LastPoseID)
                     {
                         sb.AppendLine($"\tSprite {spriteSim.ID}: {spriteSim}");
@@ -88,7 +84,7 @@ namespace DynamicXDynamicRoutinesTests
                 File.Delete("log.txt");
             File.WriteAllText("log.txt", sb.ToString());
         }
-        public void ValidateHashmap(DynamicPoseHashmap hashmap)
+        public static void ValidateHashmap(DynamicPoseHashmap hashmap)
         {
             Dictionary<ushort, int> countDic = new();
             DynamicPoseHashMapSlot? slot = null;
@@ -115,7 +111,7 @@ namespace DynamicXDynamicRoutinesTests
             foreach (var kvp in countDic)
                 Assert.IsTrue(kvp.Value < 2);
         }
-        public void ValidateVRAMMap(VRAMMap vramMap)
+        public static void ValidateVRAMMap(VRAMMap vramMap)
         {
             VRAMMapSlot slot0, slot1;
             byte size;
