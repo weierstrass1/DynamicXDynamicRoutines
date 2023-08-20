@@ -30,6 +30,7 @@ namespace off
 ;Scratch RAM
 pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1)
 HashCodeBackup: skip 1
+HashIndexBackup: skip 1
 PoseIDBackup: skip 2
 HashSizeBackup: skip 1
 pullpc
@@ -44,14 +45,14 @@ FindPose:
 		;getHashCode
 		STY.W PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
 	SEP #$10 ;XY -> 8
-	STA.B HashCodeBackup : TAX
+	STA.B HashCodeBackup : STA.b HashIndexBackup
 
 	LDA.L DX_Dynamic_Pose_Length : BEQ .couldNotBeFoundNotHashing ;if (Length == 0) return false
 	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ .couldNotBeFoundNotHashing ;if (hashSize[hashCode]) return false
 	STA.B HashSizeBackup
 
 	;X = hashCode * 2
-	TXA : ASL : TAX
+	LDA HashCodeBackup : ASL : TAX
 .hashLoop
 	REP #$20 ;A->16
 		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
@@ -63,7 +64,7 @@ FindPose:
 	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
 ;no se encontro, devolver X / 2 y Carry Clear
 .couldNotBeFound
-	TXA : LSR : TAX
+	TXA : LSR : STA.b HashIndexBackup
 .couldNotBeFoundNotHashing
 	CLC
 RTL
@@ -76,5 +77,5 @@ BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
 .found
-	TXA : LSR : TAX : SEC
+	TXA : LSR : STA.b HashIndexBackup : SEC
 RTL
