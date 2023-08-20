@@ -113,7 +113,7 @@ RTL
 Remove:
 	REP #$20
 		LDA.L DX_Dynamic_Pose_ID,X
-		;CMP.W #$FFFF : BEQ + : BRK : + ;-- TEST: slots[hashmapIndex] is not null
+		;CMP.W #$FFFF : BNE + : BRK : + ;-- TEST: slots[hashmapIndex] is null
 		PHA
 		LDA.W #$FFFF : STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
 		PLA
