@@ -4,7 +4,7 @@ incsrc "Template.asm"
 ;-----------------------------------------------------
 ;             DynamicPoseHashmap.FindPose
 ;-----------------------------------------------------
-;Scratch RAM
+;-- Scratch
 pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
 	HashCodeBackup: skip 1
 	HashIndexBackup: skip 1
@@ -12,12 +12,13 @@ pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace p
 	HashSizeBackup: skip 1
 pullpc
 
-;ASUMIENDO
-;Y (16-bit), $01 = Pose ID (16-bit)
-;X (8-bit), $00 -> hashCode (0 a 127)
-;$03 = hashSize pose
-;Se asume A 8-bit, XY 16-bit
-;Deuelve Carry clear si no se encontro y Carry set si se encontro
+;-- ENTRADA:
+;A -> 8-bit, XY -> 16-bit
+;Y (16-bit) = Pose ID
+
+;-- SALIDA:
+;Carry clear si no se encontro y Carry set si se encontro
+;HashIndexBackup es el slot devuelto.
 DynamicPoseHashmap_FindPose:
 		;getHashCode
 		STY.W PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
@@ -62,10 +63,12 @@ RTL
 ;-----------------------------------------------------
 ;          DynamicPoseHashmap.FindFreeSpace
 ;-----------------------------------------------------
-;ASUMIENDO
-;AXY -> 8 BIT
+;-- ENTRADA:
+;AXY -> 8-bit
 ;X = hashmapIndex
-;Deuelve Carry clear si no se encontro y Carry set si se encontro
+
+;-- SALIDA:
+;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
 DynamicPoseHashmap_FindFreeSpace:
 	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS DynamicPoseHashmap_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
