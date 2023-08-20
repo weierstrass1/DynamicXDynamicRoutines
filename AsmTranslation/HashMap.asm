@@ -1,4 +1,7 @@
+;Implementacion de Hashmap
 namespace DynamicPoseHashmap
+{
+
 ;-----------------------------------------------------------------------------------------
 ;             DynamicPoseHashmap.FindPose     JSL DynamicPoseHashmap_FindPose
 ;-----------------------------------------------------------------------------------------
@@ -123,4 +126,5 @@ Remove:
 	LDA.L DX_Dynamic_Pose_Length : DEC A : STA.L DX_Dynamic_Pose_Length ;Length--;
 %ReturnLongShortDBG()
 
+}
 namespace off
