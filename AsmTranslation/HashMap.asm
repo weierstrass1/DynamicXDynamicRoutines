@@ -26,7 +26,7 @@ FindPose:
 	STA.B HashSizeBackup
 
 	;X = hashCode * 2
-	LDA HashCodeBackup : ASL : TAX
+	LDA.B HashCodeBackup : ASL : TAX
 .hashLoop
 	REP #$20 ;A->16
 		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
