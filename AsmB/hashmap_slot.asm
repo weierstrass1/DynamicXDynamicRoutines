@@ -43,8 +43,8 @@ FindPose:
 	SEP #$10 ;XY -> 8
 	STA.B HashCodeBackup : TAX
 
-	LDA.L DX_Dynamic_Pose_Length : BEQ .couldNotBeFound ;if (Length == 0) return false
-	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ .couldNotBeFound ;if (hashSize[hashCode]) return false
+	LDA.L DX_Dynamic_Pose_Length : BEQ .couldNotBeFoundNotHashing ;if (Length == 0) return false
+	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ .couldNotBeFoundNotHashing ;if (hashSize[hashCode]) return false
 	STA.B HashSizeBackup
 
 	;X = hashCode * 2
@@ -58,8 +58,11 @@ FindPose:
 
 	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BEQ .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
 	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
+;no se encontro, devolver X / 2 y Carry Clear
 .couldNotBeFound
-	CLC ;return false
+	TXA : LSR : TAX
+.couldNotBeFoundNotHashing
+	CLC
 RTL
 
 .incrementHashLoopAndContinue
@@ -68,7 +71,7 @@ RTL
 	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE*2)-1 : TAX
 BRA .hashLoop
 
-;found, devolver X / 2 y Carry Set
+;se encontro, devolver X / 2 y Carry Set
 .found
 	TXA : LSR : TAX : SEC
 RTL
