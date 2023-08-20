@@ -47,11 +47,7 @@ RTL
 .incrementHashLoopAndContinue
 	SEP #$20 ;A->8
 .incrementHashLoopAndContinue_8bit
-	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2
-	if !HASHMAP_SIZE < 128 ;Optimizacion temporal, si el hashmap es de 128 entradas no es necesario hacer un AND (seria literalmente AND #$FF)
-		AND.B #(!HASHMAP_SIZE*2)-1
-	endif
-	TAX
+	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
 BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
