@@ -46,6 +46,15 @@ RemovePosesInSpace:
 ;Input:
 ;   VRAMMapBestSpace
 RemoveSpace:
+    %CallFunctionLongShortDBG(RemovePosesInSpace) ;RemovePosesInSpace(space);
+
+    LDA.B VRAMMapBestSpace_Offset : TAX ;var slot = slots[space.Offset];
+    STA.L DX_Dynamic_Tile_Offset,x ;slot.Offset = space.Offset;
+    LDA.B VRAMMapBestSpace_Size : DEC A : ORA.B #$80 : STA.L DX_Dynamic_Tile_Pose,x ;slot.SizeOrPose = (byte)((space.Size - 1) | 0x80);
+
+    LDA.B VRAMMapBestSpace_Offset : CLC : ADC.B VRAMMapBestSpace_Size : DEC A : TAX ;var slot = slots[space.Offset + space.Size - 1];
+    LDA.B VRAMMapBestSpace_Offset : STA.L DX_Dynamic_Tile_Offset,x ;slot.Offset = space.Offset;
+    LDA.B VRAMMapBestSpace_Size : DEC A : ORA.B #$80 : STA.L DX_Dynamic_Tile_Pose,x ;slot.SizeOrPose = (byte)((space.Size - 1) | 0x80);
 %ReturnLongShortDBG()
 ;public void AddPoseInSpace(byte hashmapIndex, Space space)
 ;{
