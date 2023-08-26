@@ -14,7 +14,7 @@
 ;Input:
 ;   VRAMMapBestSpace
 RemovePosesInSpace:
-    
+
 %ReturnLongShortDBG()
 ;public void RemoveSpace(Space space)
 ;{

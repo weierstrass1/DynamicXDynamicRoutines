@@ -106,4 +106,3 @@ macro VRAMMapSlot_GetSize()
     PLX
 ?.finish
 endmacro
-
