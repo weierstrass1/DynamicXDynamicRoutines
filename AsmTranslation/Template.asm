@@ -49,6 +49,23 @@ namespace DX
 	namespace off
 namespace off
 
+;-- Scratch
+pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
+	HashCodeBackup: skip 1
+	HashIndexBackup: skip 1
+	PoseIDBackup: skip 2
+	HashSizeBackup: skip 1
+	VRAMMapCurrentSpace:
+		.Offset: skip 1
+		.Score: skip 1
+		.Size: skip 1
+	VRAMMapBestSpace:
+		.Offset: skip 1
+		.Score: skip 1
+		.Size: skip 1
+	VRAMMapSlot_Size: skip 1
+pullpc
+
 ;bank
 org $008000
 
