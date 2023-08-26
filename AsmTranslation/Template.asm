@@ -64,6 +64,7 @@ pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace p
 		.Score: skip 1
 		.Size: skip 1
 	VRAMMapSlot_Size: skip 1
+	VRAMMapLoop: skip 1
 pullpc
 
 ;bank

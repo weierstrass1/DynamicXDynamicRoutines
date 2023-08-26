@@ -14,8 +14,24 @@
 ;Input:
 ;   VRAMMapBestSpace
 RemovePosesInSpace:
+    LDA.B VRAMMapBestSpace_Offset : TAX ;i = space.Offset
+    CLC : ADC.B VRAMMapBestSpace_Size : STA.B VRAMMapLoop ;limit = space.Offset + space.Size
+.loop
+    %VRAMMapSlot_GetSize()
+    STA.b VRAMMapSlot_Size ;size = slot.GetSize(PoseDataBase, Hashmap);
 
+    %VRAMMapSlot_IsFree() ;if (!slot.IsFree)
+    BNE +
+        PHX
+        LDA.L DX_Dynamic_Tile_Pose,x : ASL : TAX
+        %CallFunctionLongShortDBG(DynamicPoseHashmap_Remove) ;Hashmap.Remove(slot.SizeOrPose);
+        PLX
+    +
+
+    TXA : CLC : ADC.B VRAMMapSlot_Size : TAX ;i += size
+    CMP.B VRAMMapLoop : BCC .loop ;i < limit
 %ReturnLongShortDBG()
+
 ;public void RemoveSpace(Space space)
 ;{
 ;    RemovePosesInSpace(space);
