@@ -266,7 +266,7 @@ DynamicRoutineLine:
 	STA DX_PPU_VRAM_Transfer_SourceBNK+$01,x        ;/
 	STA DX_PPU_VRAM_Transfer_SourceBNK+$03,x        ;/
 
-	REP #$20
+	REP #$21 ;A->16 bit, carry clear
 		LDA !CurrentVRAMOffset : STA DX_PPU_VRAM_Transfer_Offset,x
 		LDA !CurrentSecondLineOffset : STA DX_PPU_VRAM_Transfer_Offset+2,x
 
@@ -274,5 +274,5 @@ DynamicRoutineLine:
 		LDA !CurrentLine2Size : STA DX_PPU_VRAM_Transfer_SourceLength+2,x
 		
 		LDA !CurrentSourceOffset : STA DX_PPU_VRAM_Transfer_Source,x ;MapAddr = Addr
-		CLC : ADC !CurrentLine1Size : STA DX_PPU_VRAM_Transfer_Source+2,x ;MapAddr = Addr
+		ADC !CurrentLine1Size : STA DX_PPU_VRAM_Transfer_Source+2,x ;MapAddr = Addr
 RTS
