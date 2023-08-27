@@ -6,6 +6,7 @@ namespace nested on
 ;Defines
 !INCREASE_PER_STEP = 15
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
+!VRAMMAP_SIZE = 128 ;vrammap size
 !DEBUG = 1
 
 ;Macros
@@ -65,6 +66,8 @@ pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace p
 		.Size: skip 1
 	VRAMMapSlot_Size: skip 1
 	VRAMMapLoop: skip 1
+	TimespanLookup: skip 1
+	VRAMMap_Adjacent: skip 1
 pullpc
 
 ;bank
@@ -72,3 +75,4 @@ org $008000
 
 ;Projecto
 incsrc "HashMap.asm"
+incsrc "VRAMMAp.asm"

@@ -1,3 +1,7 @@
+;Implementacion de Hashmap
+namespace VRAMMap
+{
+
 ;public void RemovePosesInSpace(Space space)
 ;{
 ;    byte limit = (byte)(space.Offset + space.Size);
@@ -127,3 +131,58 @@ AddPoseInSpace:
     STA.l DX_Dynamic_Tile_Offset,x  ;slot.Offset = nextSlotIndex;
     
 %ReturnLongShortDBG()
+
+;GetBestSlot
+;AXY->8 bit
+;Input: VRAMMapSlot_Size y TimespanLookup (8-bit)
+;Devuelve el mejor espacio en Y (8-bit)
+GetBestSlot:
+    LDX.B #!VRAMMAP_SIZE-1 ;byte i = VRAMMAP_SIZE - 1
+    LDY.B #$00
+    STZ.B VRAMMap_Adjacent
+.loop
+    %CallFunctionLongShortDBG(checkSpace)
+    BCS +
+        %CallFunctionLongShortDBG(checkIfCurrentIsBest)
+    +
+    LDA DX_Dynamic_Tile_Offset,X
+    TAX : CPX.B #!VRAMMAP_SIZE : BCC .loop ;i < VRAMMAP_SIZE
+%ReturnLongShortDBG()
+
+;checkSpace(byte i, byte size, ref bool adjacent, Space current, ushort TimeSpan)
+;X = current
+checkSpace:
+    LDA.L DX_Dynamic_Tile_Offset,X : AND.B #$7F : STA.B VRAMMapCurrentSpace_Offset ;current.offset = slot.offset & 0x7F
+    %VRAMMapSlot_IsRestricted()
+    BNE +
+        STZ.B VRAMMap_Adjacent ;adjacent = false
+        CLC
+        %ReturnLongShortDBG() ;return false
+    +
+
+    %CallFunctionLongShortDBG(VRAMMapSlot_GetSizeAndScore)
+    STA.B VRAMMapCurrentSpace_Score ;score = slot.GetSize(PoseDataBase, Hashmap);
+
+    ;if(adjacent)
+    LDA.B VRAMMap_Adjacent : BEQ +
+        LDA.L DX_Dynamic_Tile_Size,x : CLC : ADC.B VRAMMapSlot_Size : STA.B VRAMMapSlot_Size ;slotSize += current.Size;
+        LDA.L DX_Dynamic_Pose_TimeLastUse,x : CMP.B VRAMMapCurrentSpace_Score : BCS + ;Math.Min(score, current.Score);
+            STA.B VRAMMapCurrentSpace_Score
+    +
+
+    LDA.B VRAMMapSlot_Size : STA.L DX_Dynamic_Tile_Size,x ;current.Size = slotSize
+    LDA.B VRAMMapCurrentSpace_Score : STA.L DX_Dynamic_Pose_TimeLastUse,x ;current.Score = score;
+    
+    LDA.B VRAMMapCurrentSpace_Score : CMP #$02 : BCS + ; if(score < 2)
+        STZ.B VRAMMap_Adjacent ;adjacent = false
+        CLC
+        %ReturnLongShortDBG() ;return false
+    +
+    LDA.B VRAMMapSlot_Size : CMP.B VRAMMapCurrentSpace_Score : BCS + ;if (slotSize < size)
+        INC.B VRAMMap_Adjacent
+    +
+    SEC
+%ReturnLongShortDBG() ;return true
+
+}
+namespace off
