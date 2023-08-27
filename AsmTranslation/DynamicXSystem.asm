@@ -27,19 +27,19 @@ TakeDynamicRequest:
 	+
 	PHB : PHK : PLB
 
-	REP #$30
-		LDA.b PoseIDBackup : ASL : TAY ;DynamicPose pose = PoseDataBase.Get(id);
-		LDA.w PoseSize,y : CLC : ADC.l DX_CurrentDataSend : CMP.l DX_MaxDataPerFrame : BEQ + : BCC + ;if (currentDataSent > MaximumDataPerFrame)
-		BCC +
-			SEP #$30
-			PLB
-			CLC : RTL  ;return false;
-		+
-		PHA ;ushort currentDataSent = (ushort)(pose.Size + CurrentDataSent);
-		LDY.b PoseIDBackup
-	SEP #$20
-	LDA.w Pose16x16Blocks,y : STA.b VRAMMapTMP_Size
-	SEP #$10
+	REP #$30 ;AXY->16 bit
+			LDA.b PoseIDBackup : ASL : TAY ;DynamicPose pose = PoseDataBase.Get(id);
+			LDA.w PoseSize,y : CLC : ADC.l DX_CurrentDataSend : CMP.l DX_MaxDataPerFrame : BEQ + : BCC + ;if (currentDataSent > MaximumDataPerFrame)
+			BCC +
+				SEP #$30
+				PLB
+				CLC : RTL  ;return false;
+			+
+			PHA ;ushort currentDataSent = (ushort)(pose.Size + CurrentDataSent);
+			LDY.b PoseIDBackup
+		SEP #$20 ;A->8 bit
+		LDA.w Pose16x16Blocks,y : STA.b VRAMMapTMP_Size
+	SEP #$10 ;XY->8 bit
 	%CallFunctionLongShortDBG(VRAMMap_GetBestSlot) ;Space bestSpace = VRAMMap.GetBestSlot(pose.Blocks16x16, TimeSpan);
 	LDA.b VRAMMapBestSpace_Offset : CMP #$FF : BNE + ;if (bestSpace.Offset == 0xFF)
 		PLA : PLA
@@ -47,9 +47,9 @@ TakeDynamicRequest:
 	+
 	%CallFunctionLongShortDBG(VRAMMap_RemoveSpace)              ;VRAMMap.RemoveSpace(bestSpace);
 	%CallFunctionLongShortDBG(DynamicPoseHashmap_FindFreeSpace) ;Hashmap.FindFreeSpace(ref hashmapindex);
-	REP #$20
-		PLA : STA.l DX_CurrentDataSend
-	SEP #$20                                                    ;CurrentDataSent = currentDataSent;
+	REP #$20 ;A->16 bit
+		PLA : STA.l DX_CurrentDataSend ;CurrentDataSent = currentDataSent;
+	SEP #$20 ;A->8 bit
 
 	LDX.b HashIndexBackup
 	LDA.b VRAMMapBestSpace_Offset : STA.b DX_Dynamic_Pose_Offset,x
@@ -150,7 +150,7 @@ DynamicRoutine:
 
 	LDA #$00 : XBA
 	LDA DX_Dynamic_Pose_Offset,x
-	REP #$20
+	REP #$20 ;A->16 bit
 		ASL : TAY
 		LDA OffsetToVRAMOffset,y : STA !VRAMOffset
 
@@ -167,7 +167,7 @@ DynamicRoutine:
 
 		LDA #$0000 : STA !SourceOffset
 		LDA PoseResourceSizePerLine,y : STA !SourceSize
-	SEP #$20
+	SEP #$20 ;A->8 bit
 
 	JSR DynamicRoutineLine
 
@@ -206,7 +206,7 @@ DynamicRoutineLine:
 		LDA !SourceSize : SEC : SBC !SentData : CMP !CurrentLine1Size : BCC .EndLine : BEQ .EndLine
 		CMP #$0200 : BCC .TwoLinesWithEndLineReDir : BEQ .TwoLinesWithEndLineReDir
 .TwoLines
-	SEP #$20
+	SEP #$20 ;A->8 bit
 	LDA #$00 : XBA
 	LDA DX_PPU_VRAM_Transfer_Length : ASL : TAX ;X = number of transfer*2
 	LSR : INC A : INC A : STA DX_PPU_VRAM_Transfer_Length ;Number of transfer ++
@@ -237,7 +237,7 @@ DynamicRoutineLine:
 		BRA .TwoLinesWithEndLine
 .EndLine
 		STA !CurrentLine1Size
-	SEP #$20
+	SEP #$20 ;A->8 bit
 	LDA #$00 : XBA
 	LDA DX_PPU_VRAM_Transfer_Length : ASL : TAX ;X = number of transfer*2
 	LSR : INC A : STA DX_PPU_VRAM_Transfer_Length ;Number of transfer ++
@@ -247,14 +247,14 @@ DynamicRoutineLine:
 	LDA #$00                                        ;|BNK (high byte) = 0
 	STA DX_PPU_VRAM_Transfer_SourceBNK+$01,x        ;/
 
-	REP #$20
+	REP #$20 ;A->16 bit
 		LDA !CurrentVRAMOffset : STA DX_PPU_VRAM_Transfer_Offset,x
 		LDA !CurrentLine1Size : STA DX_PPU_VRAM_Transfer_SourceLength,x ;MapLength = Size
 		LDA !CurrentSourceOffset : STA DX_PPU_VRAM_Transfer_Source,x ;MapAddr = Addr
 		RTS
 .TwoLinesWithEndLine
 		SEC  : SBC !CurrentLine1Size : STA !CurrentLine2Size
-	SEP #$20
+	SEP #$20 ;A->8 bit
 	LDA #$00 : XBA
 	LDA DX_PPU_VRAM_Transfer_Length : ASL : TAX ;X = number of transfer*2
 	LSR : INC A : INC A : STA DX_PPU_VRAM_Transfer_Length ;Number of transfer ++
