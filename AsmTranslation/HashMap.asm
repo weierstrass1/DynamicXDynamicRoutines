@@ -83,19 +83,33 @@ BRA .hashLoop
 ;------------------------------------------------------------------------------------------------------------
 ;                DynamicPoseHashmap.Add     %CallFunctionLongShortDBG(DynamicPoseHashmap_Add)
 ;------------------------------------------------------------------------------------------------------------
+;public void Add(byte hashmapIndex, DynamicPoseHashMapSlot slot)
+;{
+;	if (slots[hashmapIndex] is not null)
+;		throw new Exception("Slot is Already used");
+;	slots[hashmapIndex] = slot;
+;	Length++;
+;	hashSize[DynamicPoseHashMapSlot.GetHashCode(slot.ID)]++;
+;}
 ;-- ENTRADA:
-;A -> 16-bit, XY -> 8-bit
-;A = Pose ID (16-bit)
+;PoseIDBackup = Pose ID (16-bit)
 ;X = hashmapIndex * 2
 Add:
+	REP #$20
 		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is not null
-			PHA : LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ + : BRK : + : PLA
+			;if (slots[hashmapIndex] is not null)
+			;	throw new Exception("Slot is Already used");
+			LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ + : BRK : +
 		endif
-		STA.l DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = slot;
+	;slots[hashmapIndex] = slot;
+	LDA.b PoseIDBackup
+	STA.l DX_Dynamic_Pose_ID,x
+	LDA.l DX_Timer
+	STA.l DX_Dynamic_Pose_TimeLastUse,x
 	SEP #$20
 	AND.b #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
-	LDA.l DX_Dynamic_Pose_HashSize,X : INC A : STA.l DX_Dynamic_Pose_HashSize,X ;hashSize[]++;
-	LDA.l DX_Dynamic_Pose_Length : INC A : STA.l DX_Dynamic_Pose_Length ;Length++;
+	LDA.l DX_Dynamic_Pose_HashSize,X : INC A : STA.l DX_Dynamic_Pose_HashSize,X ;hashSize[DynamicPoseHashMapSlot.GetHashCode(slot.ID)]++;
+	LDA.l DX_Dynamic_Pose_Length : INC A : STA.l DX_Dynamic_Pose_Length 		;Length++;
 %ReturnLongShortDBG()
 
 ;------------------------------------------------------------------------------------------------------------------

@@ -24,8 +24,9 @@ GetBestSlot:
     STZ.b VRAMMap_Adjacent
     LDA #$FF
     STA.b VRAMMapBestSpace_Size
+    STA.b VRAMMapBestSpace_Offset
     LDA #$00
-    STA.b VRAMMapBestSpace_Score    ;Best starts with size #$FF and Score #$00
+    STA.b VRAMMapBestSpace_Score    ;Best starts with size, Offset #$FF and Score #$00
 
 .loop
     %CallFunctionLongShortDBG(checkSpace)                   ;if (checkSpace(i, size, ref adjacent, current, TimeSpan))
@@ -230,6 +231,7 @@ RemoveSpace:
 ;Input:
 ;   HashIndexBackup
 ;   VRAMMapBestSpace
+;   VRAMMapTMP_Size
 AddPoseInSpace:
 
     LDA.b VRAMMapBestSpace_Offset
@@ -238,8 +240,7 @@ AddPoseInSpace:
     LDA.b HashIndexBackup
     STA.l DX_Dynamic_Tile_Pose,x    ;slot.SizeOrPose = hashmapIndex;
 
-    %VRAMMapSlot_GetSize()
-    STA.b VRAMMapSlot_Size
+    LDA.b VRAMMapTMP_Size
     CLC
     ADC.b VRAMMapBestSpace_Offset   ;byte nextSlotIndex = (byte)(space.Offset + slot.GetSize(PoseDataBase, Hashmap));
     DEC A
@@ -251,7 +252,7 @@ AddPoseInSpace:
 
     LDA VRAMMapBestSpace_Size
     SEC
-    SBC VRAMMapSlot_Size
+    SBC VRAMMapTMP_Size
     BNE +                           ;if (size == space.Size)
 %ReturnLongShortDBG()               ;   return;
 +
