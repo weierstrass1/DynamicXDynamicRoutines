@@ -154,7 +154,7 @@ GetBestSlot:
 checkSpace:
     LDA.L DX_Dynamic_Tile_Offset,X : AND.B #$7F : STA.B VRAMMapCurrentSpace_Offset ;current.offset = slot.offset & 0x7F
     %VRAMMapSlot_IsRestricted()
-    BNE +
+    BEQ +
         STZ.B VRAMMap_Adjacent ;adjacent = false
         CLC
         %ReturnLongShortDBG() ;return false
