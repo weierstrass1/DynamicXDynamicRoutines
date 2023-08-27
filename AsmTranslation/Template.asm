@@ -52,24 +52,24 @@ namespace off
 
 ;-- Scratch
 pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
-	HashCodeBackup: skip 1
-	HashIndexBackup: skip 1
-	PoseIDBackup: skip 2
-	HashSizeBackup: skip 1
+	HashCodeBackup: skip 1			;$00
+	HashIndexBackup: skip 1			;$01
+	PoseIDBackup: skip 2			;$02
+	HashSizeBackup: skip 1			;$04
 	VRAMMapCurrentSpace:
-		.Offset: skip 1
-		.Score: skip 1
-		.Size: skip 1
+		.Offset: skip 1				;$05
+		.Score: skip 1				;$06
+		.Size: skip 1				;$07
 	VRAMMapBestSpace:
-		.Offset: skip 1
-		.Score: skip 1
-		.Size: skip 1
-	VRAMMapTMP_Size: skip 1
-	VRAMMapSlot_Size: skip 1
-	VRAMMapSlot_Score: skip 1
-	VRAMMapLoop: skip 1
-	TimespanLookup: skip 1
-	VRAMMap_Adjacent: skip 1
+		.Offset: skip 1				;$08
+		.Score: skip 1				;$09
+		.Size: skip 1				;$0A
+	VRAMMapTMP_Size: skip 1			;$0B
+	VRAMMapSlot_Size: skip 1		;$0C
+	VRAMMapSlot_Score: skip 1		;$0D
+	TemporaryBackupID:				;$0E-$0F -> multiplication handler
+		VRAMMapLoop: skip 1			;$0E
+		VRAMMap_Adjacent: skip 1	;$0F
 pullpc
 
 ;bank
