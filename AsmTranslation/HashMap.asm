@@ -15,28 +15,28 @@ namespace DynamicPoseHashmap
 ;HashIndexBackup es el slot devuelto.
 FindPose:
 		;getHashCode
-		STY.W PoseIDBackup : TYA : AND.B #!HASHMAP_SIZE-1
+		STY.w PoseIDBackup : TYA : AND.b #!HASHMAP_SIZE-1
 	SEP #$10 ;XY -> 8
-	STA.B HashCodeBackup : STA.B HashIndexBackup
+	STA.b HashCodeBackup : STA.b HashIndexBackup
 
-	LDA.L DX_Dynamic_Pose_Length : BEQ .ReturnFalseCarryClear ;if (Length == 0) return false
-	LDA.L DX_Dynamic_Pose_HashSize,X : BEQ .ReturnFalseCarryClear ;if (hashSize[hashCode]) return false
-	STA.B HashSizeBackup
+	LDA.l DX_Dynamic_Pose_Length : BEQ .ReturnFalseCarryClear ;if (Length == 0) return false
+	LDA.l DX_Dynamic_Pose_HashSize,X : BEQ .ReturnFalseCarryClear ;if (hashSize[hashCode]) return false
+	STA.b HashSizeBackup
 
 	;X = hashCode * 2
-	LDA.B HashCodeBackup : ASL : TAX
+	LDA.b HashCodeBackup : ASL : TAX
 .hashLoop
 	REP #$20 ;A->16
-		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
-		CMP.B PoseIDBackup ;z = (A == PoseIDBackup)
+		LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ .incrementHashLoopAndContinue ;if (slot is null)
+		CMP.b PoseIDBackup ;z = (A == PoseIDBackup)
 	SEP #$20 ;A->8
 	BEQ ReturnHashIndexAndTrue ;slot.ID == id
 
-	AND.B #!HASHMAP_SIZE-1 : CMP.B HashCodeBackup : BNE .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
-	DEC.B HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
+	AND.b #!HASHMAP_SIZE-1 : CMP.b HashCodeBackup : BNE .incrementHashLoopAndContinue_8bit ;DynamicPoseHashMapSlot.GetHashCode(slot.ID) != hashCode
+	DEC.b HashSizeBackup : BNE .incrementHashLoopAndContinue_8bit ;i--, i > 0 -> incrementHashLoopAndContinue_8bit
 ;no se encontro, devolver X / 2 y Carry Clear
 .couldNotBeFound
-	TXA : LSR : STA.B HashIndexBackup
+	TXA : LSR : STA.b HashIndexBackup
 .ReturnFalseCarryClear
 	CLC
 RTL
@@ -46,13 +46,13 @@ RTL
 	SEP #$20 ;A->8
 .incrementHashLoopAndContinue_8bit
 	;Seguir la busqueda
-	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
+	TXA : CLC : ADC.b #!INCREASE_PER_STEP*2 : AND.b #(!HASHMAP_SIZE-1)*2 : TAX
 BRA .hashLoop
 
 ;se encontro, devolver X / 2 y Carry Set
 ;este label es tambien utilizado en FindFreeSpace para devolver el slot que se encontro.
 ReturnHashIndexAndTrue:
-	TXA : LSR : STA.B HashIndexBackup : SEC
+	TXA : LSR : STA.b HashIndexBackup : SEC
 RTL
 
 ;---------------------------------------------------------------------------------------------
@@ -66,18 +66,18 @@ RTL
 ;Carry clear si no se encontro y Carry set si se encontro
 ;HashIndexBackup es el slot devuelto.
 FindFreeSpace:
-	LDA.L DX_Dynamic_Pose_Length : CMP.B #!HASHMAP_SIZE : BCS FindPose_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
+	LDA.l DX_Dynamic_Pose_Length : CMP.b #!HASHMAP_SIZE : BCS FindPose_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
 
 	;X = hashmapIndex * 2
 	TXA : ASL : TAX
 .hashLoop
 	REP #$20 ;A->16
-		LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF ;z = if (slot is null)
+		LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF ;z = if (slot is null)
 	SEP #$20 ;A->8
 	BEQ ReturnHashIndexAndTrue
 
 	;Seguir la busqueda
-	TXA : CLC : ADC.B #!INCREASE_PER_STEP*2 : AND.B #(!HASHMAP_SIZE-1)*2 : TAX
+	TXA : CLC : ADC.b #!INCREASE_PER_STEP*2 : AND.b #(!HASHMAP_SIZE-1)*2 : TAX
 BRA .hashLoop
 
 ;------------------------------------------------------------------------------------------------------------
@@ -89,13 +89,13 @@ BRA .hashLoop
 ;X = hashmapIndex * 2
 Add:
 		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is not null
-			PHA : LDA.L DX_Dynamic_Pose_ID,X : CMP.W #$FFFF : BEQ + : BRK : + : PLA
+			PHA : LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ + : BRK : + : PLA
 		endif
-		STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = slot;
+		STA.l DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = slot;
 	SEP #$20
-	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
-	LDA.L DX_Dynamic_Pose_HashSize,X : INC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]++;
-	LDA.L DX_Dynamic_Pose_Length : INC A : STA.L DX_Dynamic_Pose_Length ;Length++;
+	AND.b #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
+	LDA.l DX_Dynamic_Pose_HashSize,X : INC A : STA.l DX_Dynamic_Pose_HashSize,X ;hashSize[]++;
+	LDA.l DX_Dynamic_Pose_Length : INC A : STA.l DX_Dynamic_Pose_Length ;Length++;
 %ReturnLongShortDBG()
 
 ;------------------------------------------------------------------------------------------------------------------
@@ -106,17 +106,17 @@ Add:
 ;X = hashmapIndex * 2
 Remove:
 	REP #$20
-		LDA.L DX_Dynamic_Pose_ID,X
+		LDA.l DX_Dynamic_Pose_ID,X
 		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is null
-			CMP.W #$FFFF : BNE + : BRK : +
+			CMP.w #$FFFF : BNE + : BRK : +
 		endif
 		PHA
-		LDA.W #$FFFF : STA.L DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
+		LDA.w #$FFFF : STA.l DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
 		PLA
 	SEP #$20
-	AND.B #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
-	LDA.L DX_Dynamic_Pose_HashSize,X : DEC A : STA.L DX_Dynamic_Pose_HashSize,X ;hashSize[]--
-	LDA.L DX_Dynamic_Pose_Length : DEC A : STA.L DX_Dynamic_Pose_Length ;Length--;
+	AND.b #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
+	LDA.l DX_Dynamic_Pose_HashSize,X : DEC A : STA.l DX_Dynamic_Pose_HashSize,X ;hashSize[]--
+	LDA.l DX_Dynamic_Pose_Length : DEC A : STA.l DX_Dynamic_Pose_Length ;Length--;
 %ReturnLongShortDBG()
 
 }

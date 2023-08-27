@@ -2,7 +2,7 @@
 ;Input:
 ;   x: Index of VRAMMapSlot
 ;Output: 
-;   N clear is it is not restricted, N set if it is restricted
+;   Z clear is it is not restricted, Z set if it is restricted
 ;   A = VRAMMapSlot offset
 macro VRAMMapSlot_IsRestricted()
     LDA.l DX_Dynamic_Tile_Offset,x
@@ -12,7 +12,7 @@ endmacro
 ;Input:
 ;   x: Index of VRAMMapSlot
 ;Output: 
-;   N clear is it is not free, N set if it is free
+;   Z clear is it is not free, Z set if it is free
 ;   A = VRAMMapSlot Size Or Pose
 macro VRAMMapSlot_IsFree()
     LDA.l DX_Dynamic_Tile_Size,x
@@ -23,7 +23,7 @@ endmacro
 ;    if (IsFree)
 ;        return (byte)((SizeOrPose & 0x7F) + 1);
 ;    DynamicPoseHashMapSlot poseslot = hashmap.Get(SizeOrPose);
-;    return poseDataBase.Get(poseslot.ID).Blocks16x16;
+;    return poseDataBase.Get(poseslot.ID).blocks16x16;
 ;}
 ;public byte GetScore(ushort TimeSpan, DynamicPoseHashmap Hashmap)
 ;{
@@ -31,7 +31,7 @@ endmacro
 ;        return 0xFF;
 ;    return (byte)Math.Min(TimeSpan - Hashmap.Get(SizeOrPose).TimeLastUse, 0xFE);
 ;}
-;This do 2 in 1 to save some cycles
+;This does 2 in 1 to save some cycles
 ;Input:
 ;   x: Index of VRAMMapSlot
 ;Output:
@@ -58,7 +58,7 @@ VRAMMapSlot_GetSizeAndScore:
     TAY
 
     LDA.w Pose16x16Blocks,y
-    STA.b VRAMMapSlot_Size      ;return poseDataBase.Get(poseslot.ID).Blocks16x16;
+    STA.b VRAMMapSlot_Size      ;return poseDataBase.Get(poseslot.ID).blocks16x16;
 
     REP #$20
     LDA DX_Timer
@@ -76,7 +76,7 @@ VRAMMapSlot_GetSizeAndScore:
 ;    if (IsFree)
 ;        return (byte)((SizeOrPose & 0x7F) + 1);
 ;    DynamicPoseHashMapSlot poseslot = hashmap.Get(SizeOrPose);
-;    return poseDataBase.Get(poseslot.ID).Blocks16x16;
+;    return poseDataBase.Get(poseslot.ID).blocks16x16;
 ;}
 ;This do 2 in 1 to save some cycles
 ;Input:
@@ -101,7 +101,7 @@ macro VRAMMapSlot_GetSize()
     LDA.l DX_Dynamic_Pose_ID,X  ;DynamicPoseHashMapSlot poseslot = hashmap.Get(SizeOrPose);
     TAY
 
-    LDA.w Pose16x16Blocks,y     ;return poseDataBase.Get(poseslot.ID).Blocks16x16;
+    LDA.w Pose16x16Blocks,y     ;return poseDataBase.Get(poseslot.ID).blocks16x16;
 
     PLX
 ?.finish
