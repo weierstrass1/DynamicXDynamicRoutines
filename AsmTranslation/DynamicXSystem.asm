@@ -29,7 +29,7 @@ TakeDynamicRequest:
 
 	REP #$30 ;AXY->16 bit
 			LDA.b PoseIDBackup : ASL : TAY ;DynamicPose pose = PoseDataBase.Get(id);
-			LDA.w PoseSize,y : CLC : ADC.l DX_CurrentDataSend : CMP.l DX_MaxDataPerFrame : BEQ + : BCC + ;if (currentDataSent > MaximumDataPerFrame)
+			LDA.w PoseSize,y : CLC : ADC.l DX_Dynamic_CurrentDataSend : CMP.l DX_Dynamic_MaxDataPerFrame : BEQ + : BCC + ;if (currentDataSent > MaximumDataPerFrame)
 			BCC +
 				SEP #$30
 				PLB
@@ -48,7 +48,7 @@ TakeDynamicRequest:
 	%CallFunctionLongShortDBG(VRAMMap_RemoveSpace)              ;VRAMMap.RemoveSpace(bestSpace);
 	%CallFunctionLongShortDBG(DynamicPoseHashmap_FindFreeSpace) ;Hashmap.FindFreeSpace(ref hashmapindex);
 	REP #$20 ;A->16 bit
-		PLA : STA.l DX_CurrentDataSend ;CurrentDataSent = currentDataSent;
+		PLA : STA.l DX_Dynamic_CurrentDataSend ;CurrentDataSent = currentDataSent;
 	SEP #$20 ;A->8 bit
 
 	LDX.b HashIndexBackup
