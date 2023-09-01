@@ -25,3 +25,5 @@ _E: skip 1
 _F: skip 1
 SA1_CALLFUNC_PTR: skip 3
 SA1_EXECUTE_FUNC: skip 1
+SA1_READY: skip 1
+TEXT_IND: skip 2

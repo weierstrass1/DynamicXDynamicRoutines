@@ -8,8 +8,12 @@ incsrc "variables.asm"
 ;rom
 reset bytes : ORG $008000
 incsrc "main/loop.asm"
-incsrc "main/sa1.asm"
+incsrc "main/tests.asm"
 incsrc "main/test.asm"
+incsrc "main/sa1.asm"
+
+GRAFICOS_TEXTO:
+incbin "graficos.bin"
 
 I_CRASH:
 STP

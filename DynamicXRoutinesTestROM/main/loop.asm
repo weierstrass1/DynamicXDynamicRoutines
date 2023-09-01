@@ -24,6 +24,7 @@ I_RESET:
 		LDA.W #SA1_IRQ : STA.W SA1_CPUIRQVECTOR
 	SEP #$30
 
+	;SA-1 init
 	LDA.B #$80 : STA.W SA1_MMC_BANKS
 	LDA.B #$81 : STA.W SA1_MMC_BANKS+1
 	LDA.B #$82 : STA.W SA1_MMC_BANKS+2
@@ -34,22 +35,45 @@ I_RESET:
 	STZ.W SA1_CPU_BWRAM_MAPPING
 	LDA.B #$FF : STA.W SA1_CPU_IRAM_WRITE_PROT
 	STZ.W SA1_CPUCONTROL
-LoopMain:
-    ;Pone tus weas aqui
-	LDA.B #(FuncionTest)&$FF : STA.B SA1_CALLFUNC_PTR
-	LDA.B #(FuncionTest>>8)&$FF : STA.B SA1_CALLFUNC_PTR+1
-	LDA.B #(FuncionTest>>16)&$FF : STA.B SA1_CALLFUNC_PTR+2
 
-	;Llamar a la funcion y esperar (leer sa1.asm)
-	LDA.B #$01 : STA.B SA1_EXECUTE_FUNC
--	LDA.B SA1_EXECUTE_FUNC : BNE -
+	;Ready
+-	LDA.B SA1_READY : BEQ -
 
-	;Hacer la pantalla blanca para indicar que hubo suceso, por ejemplo.
+	;Screen init
+	LDA.B #!HW_BG_Mode0 : STA.W HW_BGMODE
+
+	;White screen
 	STZ.W HW_CGADD
 	LDA.B #$FF : STA.W HW_CGDATA
 	LDA.B #$7F : STA.W HW_CGDATA
+	LDA.B #$00 : STA.W HW_CGDATA
+	LDA.B #$00 : STA.W HW_CGDATA
+	LDA.B #$FF : STA.W HW_CGDATA
+	LDA.B #$7F : STA.W HW_CGDATA
+	LDA.B #$FF : STA.W HW_CGDATA
+	LDA.B #$7F : STA.W HW_CGDATA
+	
+	;Disable all layers but l1
+	LDA.B #!HW_Through_BG1 : STA.W HW_TM
+	STZ.W HW_TMW
+	STZ.W HW_TS
+	STZ.W HW_TSW
 
-	LDA.B #$0F
-	STA.W HW_INIDISP
-Terminado:
-JML Terminado
+	;Set l1 to 256x256
+	STZ.W HW_BG1SC
+
+	;Set L1 to use $7000 in VRAM
+	LDA.B #$33 : STA.W HW_BG12NBA : STA.W HW_BG34NBA
+
+	;(Debug, see nmi time)
+	LDA.B #!HW_VINC_IncOnHi
+	STA.W HW_VMAINC
+	REP #$10
+		LDX.W #$3000 : STX.W HW_VMADD
+		LDX.W #$1801 : STX.W HW_DMAPARAM
+		LDX.W #$1000 : STX.W HW_DMACNT
+		LDX.W #GRAFICOS_TEXTO : STX.W HW_DMAADDR
+		LDA.B #GRAFICOS_TEXTO>>16 : STA.W HW_DMAADDR+2
+	SEP #$10
+	LDA.B #!Ch0 : STA.W HW_MDMAEN
+JML LoopMain
