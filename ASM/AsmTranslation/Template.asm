@@ -1,5 +1,4 @@
 ;Template para pruebas de asar
-lorom
 math pri on
 namespace nested on
 
@@ -28,7 +27,7 @@ macro CallFunctionLongShortDBG(func)
 endmacro
 
 ;Variables
-org $7F0000
+pushpc : org $7F0000
 !Base1 = $3000 ;de SA-1, base directpage
 namespace DX
 	Timer: skip 2
@@ -49,7 +48,7 @@ namespace DX
 			ID: skip !HASHMAP_SIZE*2 ;Current Pose ID that was loaded to VRAM
 		namespace off
 	namespace off
-namespace off
+pullpc : namespace off
 
 ;-- Scratch
 pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace para evitar variables duplicadas
@@ -72,9 +71,6 @@ pushpc : org !Base1 ;$0000 (S-CPU) o $3000 (SA-1). Se podria usar un namespace p
 		VRAMMapLoop: skip 1			;$0E
 		VRAMMap_Adjacent: skip 1	;$0F
 pullpc
-
-;bank
-org $008000
 
 ;Projecto
 incsrc  "./VRAMMapSlot.asm"
