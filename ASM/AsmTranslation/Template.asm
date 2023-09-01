@@ -27,7 +27,7 @@ macro CallFunctionLongShortDBG(func)
 endmacro
 
 ;Variables
-pushpc : org $7F0000
+pushpc : org $404000
 !Base1 = $3000 ;de SA-1, base directpage
 namespace DX
 	Timer: skip 2
