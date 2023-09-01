@@ -7,7 +7,7 @@ SA1_Reset:
 
         ;Clear I-RAM
         LDX.W #$07FE
--       STZ.W $3000,X
+-       STZ.W DirectPage,X
         DEX #2 : BPL -
 	SEP #$30 ;A/X/Y 8-bit
 	LDA.B #$01 : STA.B TEXT_IND
