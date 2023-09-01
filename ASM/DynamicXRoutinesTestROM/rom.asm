@@ -16,6 +16,8 @@ incsrc "../AsmTranslation/Template.asm"
 GRAFICOS_TEXTO:
 incbin "graficos.bin"
 
+print "program end: ",pc
+
 I_CRASH:
 STP
 
