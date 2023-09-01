@@ -7,12 +7,12 @@ macro DibujarTextoPantalla(Texto)
 		LDA.B TEXT_IND : CLC : ADC.W #32 : STA.B TEXT_IND
 		STA.W HW_VMADD
 	SEP #$20
--		LDA.L <Texto>,X : BEQ +
+?-		LDA.L <Texto>,X : BEQ ?+
 			STA.W HW_VMDATA
 			STZ.W HW_VMDATA+1
 			INX
-			BRA -
-		+
+			BRA ?-
+		?+
 	SEP #$10
 	LDA.B #$0F
 	STA.W HW_INIDISP
