@@ -38,7 +38,6 @@ endmacro
 ;   A is score
 ;   VRAMMapSlot_Size is size
 VRAMMapSlot_GetSizeAndScore:
-
     %VRAMMapSlot_IsFree()       ;if (IsFree)
     BEQ .IsNotFree
 
@@ -84,7 +83,7 @@ VRAMMapSlot_GetSizeAndScore:
 ;Output:
 ;   A is size
 macro VRAMMapSlot_GetSize()
-
+?GetSize:
     %VRAMMapSlot_IsFree()       ;if (IsFree)
     BEQ ?.IsNotFree
 

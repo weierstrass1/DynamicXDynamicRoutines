@@ -8,6 +8,7 @@ namespace nested on
 !HASHMAP_SIZE = 128 ;tiene que ser factor de 2
 !VRAMMAP_SIZE = 128 ;vrammap size
 !DEBUG = 1
+!UnitTests = 1
 
 ;Macros
 macro ReturnLongShortDBG()
@@ -76,5 +77,12 @@ pullpc
 org $008000
 
 ;Projecto
-incsrc "HashMap.asm"
-incsrc "VRAMMAp.asm"
+incsrc  "./VRAMMapSlot.asm"
+incsrc  "./HashMap.asm"
+incsrc  "./VRAMMap.asm"
+incsrc  "./DynamicXSystem.asm"
+if !UnitTests
+incsrc "./TestData.asm"
+else
+incsrc "./HeavyTestData.asm"
+endif

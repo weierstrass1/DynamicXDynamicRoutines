@@ -7,6 +7,7 @@ incsrc "variables.asm"
 
 ;rom
 reset bytes : ORG $008000
+incsrc "../AsmTranslation/Template.asm"
 incsrc "main/loop.asm"
 incsrc "main/tests.asm"
 incsrc "main/test.asm"

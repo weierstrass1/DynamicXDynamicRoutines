@@ -69,7 +69,7 @@ FindFreeSpace:
 	LDA.l DX_Dynamic_Pose_Length : CMP.b #!HASHMAP_SIZE : BCS FindPose_ReturnFalseCarryClear ;Length >= HASHMAP_SIZE
 
 	;X = hashmapIndex * 2
-	TXA : ASL : TAX
+	LDA.b HashIndexBackup : ASL : TAX
 .hashLoop
 	REP #$20 ;A->16
 		LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF ;z = if (slot is null)
@@ -102,10 +102,10 @@ Add:
 			LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ + : BRK : +
 		endif
 	;slots[hashmapIndex] = slot;
-	LDA.b PoseIDBackup
-	STA.l DX_Dynamic_Pose_ID,x
 	LDA.l DX_Timer
 	STA.l DX_Dynamic_Pose_TimeLastUse,x
+	LDA.b PoseIDBackup
+	STA.l DX_Dynamic_Pose_ID,x
 	SEP #$20
 	AND.b #!HASHMAP_SIZE-1 : TAX ;DynamicPoseHashMapSlot.GetHashCode()
 	LDA.l DX_Dynamic_Pose_HashSize,X : INC A : STA.l DX_Dynamic_Pose_HashSize,X ;hashSize[DynamicPoseHashMapSlot.GetHashCode(slot.ID)]++;
