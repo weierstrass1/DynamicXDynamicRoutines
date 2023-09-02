@@ -1,7 +1,5 @@
 ;TestIsRestricted
 VRAMMapSlotTests_TestIsRestricted:
-    STZ.B TEST_STATUS
-
     ;VRAMMapSlot slot = new() Offset = 0, SizeOrPose = 0,
     LDX.B #$00
     LDA.B #$00 : STA.L DX_Dynamic_Tile_Offset,X
