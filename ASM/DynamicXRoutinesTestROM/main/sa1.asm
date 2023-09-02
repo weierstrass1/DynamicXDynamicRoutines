@@ -23,6 +23,13 @@ SA1_Reset:
 -		STA.L $400000,X
 		STA.L $410000,X
 		INX #2 : BNE -
+
+		LDA.W #$FFFF
+		!i = 0
+		while !i < 256
+			STA.L DX_Dynamic_Pose_ID+!i
+			!i #= !i+2
+		endif
 	SEP #$30
 
 	INC.B SA1_READY
