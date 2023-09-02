@@ -1,4 +1,14 @@
 ;Call a function to the SA-1 by storing the poitner to it in SA1_CALLFUNC_PTR then setting SA1_EXECUTE_FUNC to 01
+TEST_CRASH:
+	LDA.B #$FF : STA.B TEST_STATUS : STZ.B SA1_EXECUTE_FUNC
+
+	SEI : CLC : XCE
+	REP #$38 ;A/X/Y 16-bit, Disable Decimal Mode
+		LDA.W #DirectPage : TCD
+		LDA.W #$37FF : TCS
+	SEP #$30
+BRA SA1_READYSTAT
+
 SA1_Reset:
 	SEI : CLC : XCE
 	REP #$38 ;A/X/Y 16-bit, Disable Decimal Mode
@@ -12,6 +22,7 @@ SA1_Reset:
 	SEP #$30 ;A/X/Y 8-bit
 	LDA.B #$01 : STA.B TEXT_IND
 
+SA1_READYSTAT:
 	LDA.B #$80 : STA.W SA1_CPU_BWRAM_WRITE_ON+1
 	STZ.W SA1_CPU_BWRAM_MAPPING+1
 	LDA.B #$FF : STA.W SA1_CPU_IRAM_WRITE_PROT+1

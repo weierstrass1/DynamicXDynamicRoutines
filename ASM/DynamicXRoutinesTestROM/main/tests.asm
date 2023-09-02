@@ -19,22 +19,35 @@ macro HacerTest(Funcion, Textos)
 
 	;Llamar a la funcion y esperar (leer sa1.asm)
 	LDA.B #$01 : STA.B SA1_EXECUTE_FUNC
--	LDA.B SA1_EXECUTE_FUNC : BNE -
-
-	;Dibujar texto en pantalla
-	LDA.B TEST_STATUS : ASL : CLC : ADC.B TEST_STATUS : TAX
-
-	;ptr
-	LDA.L <Textos>,X : STA.B TEXT_PTR
-	LDA.L <Textos>+1,X : STA.B TEXT_PTR+1
-	LDA.L <Textos>+2,X : STA.B TEXT_PTR+2
+?-	LDA.B SA1_EXECUTE_FUNC : BNE ?-
 
 	LDA.B #!HW_DISP_FBlank                    ;\ Enable F-blank.
 	STA.W HW_INIDISP                          ;/
 
-	STZ.W HW_CGADD
-	LDA.B #$00 : STA.W HW_CGDATA
-	LDA.B #$20 : STA.W HW_CGDATA
+	LDA.B TEST_STATUS : CMP.B #$FF : BEQ ?+
+		;Dibujar texto en pantalla
+		LDA.B TEST_STATUS : ASL : CLC : ADC.B TEST_STATUS : TAX
+
+		;ptr
+		LDA.L <Textos>,X : STA.B TEXT_PTR
+		LDA.L <Textos>+1,X : STA.B TEXT_PTR+1
+		LDA.L <Textos>+2,X : STA.B TEXT_PTR+2
+
+		STZ.W HW_CGADD
+		LDA.B #$00 : STA.W HW_CGDATA
+		LDA.B #$20 : STA.W HW_CGDATA
+		BRA ?++
+	?+
+		;valido
+		LDA.B #TextoCrash : STA.B TEXT_PTR
+		LDA.B #TextoCrash>>8 : STA.B TEXT_PTR+1
+		LDA.B #TextoCrash>>16 : STA.B TEXT_PTR+2
+		STZ.W HW_CGADD
+		LDA.B #$1F : STA.W HW_CGDATA
+		LDA.B #$00 : STA.W HW_CGDATA
+	?++
+
+	;drawtext
 	REP #$30
 		LDY.W #$0000
 		LDA.B TEXT_IND : CLC : ADC.W #32 : STA.B TEXT_IND
@@ -50,6 +63,8 @@ macro HacerTest(Funcion, Textos)
 	LDA.B #$0F
 	STA.W HW_INIDISP
 endmacro
+
+TextoCrash: db "Crasheado!",$00
 
 LoopMain:
     ;Pone tus weas aqui
