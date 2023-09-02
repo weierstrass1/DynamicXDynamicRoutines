@@ -1,6 +1,17 @@
 macro HacerTest(Funcion, Textos)
 	STZ.B TEST_STATUS
 
+	;Background color
+	LDA.B #!HW_DISP_FBlank                    ;\ Enable F-blank.
+	STA.W HW_INIDISP                          ;/
+
+	STZ.W HW_CGADD
+	LDA.B #$08 : STA.W HW_CGDATA
+	LDA.B #$01 : STA.W HW_CGDATA
+
+	LDA.B #$0F
+	STA.W HW_INIDISP
+
     ;Pone tus weas aqui
 	LDA.B #(<Funcion>)&$FF : STA.B SA1_CALLFUNC_PTR
 	LDA.B #(<Funcion>>>8)&$FF : STA.B SA1_CALLFUNC_PTR+1
@@ -20,6 +31,10 @@ macro HacerTest(Funcion, Textos)
 
 	LDA.B #!HW_DISP_FBlank                    ;\ Enable F-blank.
 	STA.W HW_INIDISP                          ;/
+
+	STZ.W HW_CGADD
+	LDA.B #$00 : STA.W HW_CGDATA
+	LDA.B #$20 : STA.W HW_CGDATA
 	REP #$30
 		LDY.W #$0000
 		LDA.B TEXT_IND : CLC : ADC.W #32 : STA.B TEXT_IND
