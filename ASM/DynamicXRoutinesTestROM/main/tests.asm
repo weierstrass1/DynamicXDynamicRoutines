@@ -38,8 +38,8 @@ endmacro
 
 LoopMain:
     ;Pone tus weas aqui
-	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, VRAMMapSlotTestStrings)
-	%HacerTest(VRAMMapSlotTests_TestIsRestricted, SlotTestsStrings)
-	%HacerTest(VRAMMapSlotTests_TestIsFree, SlotTestsStrings)
+	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsStrings)
+	%HacerTest(VRAMMapSlotTests_TestIsRestricted, VRAMMapSlotTestStrings)
+	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTestStrings)
 Terminado:
 JML Terminado
