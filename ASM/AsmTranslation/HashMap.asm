@@ -99,7 +99,11 @@ Add:
 		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is not null
 			;if (slots[hashmapIndex] is not null)
 			;	throw new Exception("Slot is Already used");
-			LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ + : BRK : +
+			LDA.l DX_Dynamic_Pose_ID,X : CMP.w #$FFFF : BEQ +
+			SEP #$20
+			LDA #$FF : STA TEST_STATUS
+			%ReturnLongShortDBG()
+		+
 		endif
 	;slots[hashmapIndex] = slot;
 	LDA.l DX_Timer
@@ -122,7 +126,11 @@ Remove:
 	REP #$20
 		LDA.l DX_Dynamic_Pose_ID,X
 		if !DEBUG != 0 ;-- TEST: slots[hashmapIndex] is null
-			CMP.w #$FFFF : BNE + : BRK : +
+			CMP.w #$FFFF : BNE +
+			SEP #$20
+			LDA #$FF : STA TEST_STATUS
+			%ReturnLongShortDBG()
+		+
 		endif
 		PHA
 		LDA.w #$FFFF : STA.l DX_Dynamic_Pose_ID,X ;slots[hashmapIndex] = null;
