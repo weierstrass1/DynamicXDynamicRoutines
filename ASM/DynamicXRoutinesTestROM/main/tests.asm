@@ -53,6 +53,14 @@ endmacro
 
 LoopMain:
     ;Pone tus weas aqui
+	REP #$20
+	LDA.w #$FFFF
+	!i = 0
+	while !i < 256
+		STA.l DX_Dynamic_Pose_ID+!i
+		!i #= !i+2
+	endif
+	SEP #$20
 	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsStrings)
 	%HacerTest(VRAMMapSlotTests_TestIsRestricted, VRAMMapSlotTests1)
 	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTests2)
