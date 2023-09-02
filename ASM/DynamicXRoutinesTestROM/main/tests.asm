@@ -1,16 +1,24 @@
 ;Macro para dibujar texto en rom para la pantalla
-macro DibujarTextoPantalla(Texto)
+macro DibujarTextoPantalla(Texto_PTR)
+	;test
+	LDA.B TEST_STATUS : ASL : CLC : ADC.B TEST_STATUS : TAX
+
+	;ptr
+	LDA.L <Texto_PTR>,X : STA.B TEXT_PTR
+	LDA.L <Texto_PTR>+1,X : STA.B TEXT_PTR+1
+	LDA.L <Texto_PTR>+2,X : STA.B TEXT_PTR+2
+
 	LDA.B #!HW_DISP_FBlank                    ;\ Enable F-blank.
 	STA.W HW_INIDISP                          ;/
 	REP #$30
-		LDX.W #$0000
+		LDY.W #$0000
 		LDA.B TEXT_IND : CLC : ADC.W #32 : STA.B TEXT_IND
 		STA.W HW_VMADD
 	SEP #$20
-?-		LDA.L <Texto>,X : BEQ ?+
+?-		LDA.B [TEXT_PTR],Y : BEQ ?+
 			STA.W HW_VMDATA
 			STZ.W HW_VMDATA+1
-			INX
+			INY
 			BRA ?-
 		?+
 	SEP #$10
@@ -18,8 +26,8 @@ macro DibujarTextoPantalla(Texto)
 	STA.W HW_INIDISP
 endmacro
 
-macro HacerTest(Funcion, TextoPasado, TextoFallido)
-	STZ.B TEST_PASADO
+macro HacerTest(Funcion, Textos)
+	STZ.B TEST_STATUS
 
     ;Pone tus weas aqui
 	LDA.B #(<Funcion>)&$FF : STA.B SA1_CALLFUNC_PTR
@@ -29,18 +37,13 @@ macro HacerTest(Funcion, TextoPasado, TextoFallido)
 	;Llamar a la funcion y esperar (leer sa1.asm)
 	LDA.B #$01 : STA.B SA1_EXECUTE_FUNC
 -	LDA.B SA1_EXECUTE_FUNC : BNE -
-
-	LDA.B TEST_PASADO : BEQ +
-		%DibujarTextoPantalla(<TextoPasado>)
-		BRA ++
-	+
-		%DibujarTextoPantalla(<TextoFallido>)
-	++
+	%DibujarTextoPantalla(<Textos>)
 endmacro
 
 LoopMain:
     ;Pone tus weas aqui
-	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsRetP, SlotTestsRetF)
-	%HacerTest(VRAMMapSlotTests, VRAMMapSlotTestsRetP, VRAMMapSlotTestsF)
+	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, VRAMMapSlotTestStrings)
+	%HacerTest(VRAMMapSlotTests_TestIsRestricted, SlotTestsStrings)
+	%HacerTest(VRAMMapSlotTests_TestIsFree, SlotTestsStrings)
 Terminado:
 JML Terminado

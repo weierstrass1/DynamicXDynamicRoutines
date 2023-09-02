@@ -4,9 +4,10 @@ DynamicPoseHashmapSlotTests_TestGetHashCode:
 	AND.b #!HASHMAP_SIZE-1 ;DynamicPoseHashMapSlot.GetHashCode()
     CMP.B #$05
     BNE +
-        INC.B TEST_PASADO
+        INC.B TEST_STATUS
     +
 RTL
 
+SlotTestsStrings: dl SlotTestsRetP,SlotTestsRetF
 SlotTestsRetP: db "Test SlotTests: Pasado",$00
 SlotTestsRetF: db "Test SlotTests: Fallado",$00
