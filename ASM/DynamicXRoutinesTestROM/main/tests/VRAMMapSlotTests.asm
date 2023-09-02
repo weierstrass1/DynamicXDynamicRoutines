@@ -53,5 +53,5 @@ VRAMMapSlotTestsAssert1: db "TestIsRestricted Assert 1",$00
 VRAMMapSlotTestsAssert2: db "TestIsRestricted Assert 2",$00
 
 VRAMMapSlotTestsRetP2: db "Test TestIsFree: Pasado",$00
-VRAMMapSlotTestsAssert3: db "TestIsFree Assert 3",$00
-VRAMMapSlotTestsAssert4: db "TestIsFree Assert 4",$00
+VRAMMapSlotTestsAssert3: db "TestIsFree Assert 1",$00
+VRAMMapSlotTestsAssert4: db "TestIsFree Assert 2",$00
