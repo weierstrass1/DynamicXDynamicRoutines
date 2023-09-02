@@ -242,7 +242,7 @@ VRAMMapSlotTests4:
     dl .Assert6
     dl .Assert7
     dl .Assert8
-.Pasado db "Test TestGetSizeAndScore: Pasado",$00
+.Pasado db "TestGetSizeAndScore: Pasado",$00
 .Assert1 db "TestGetSizeAndScore Assert 1",$00
 .Assert2 db "TestGetSizeAndScore Assert 2",$00
 .Assert3 db "TestGetSizeAndScore Assert 3",$00

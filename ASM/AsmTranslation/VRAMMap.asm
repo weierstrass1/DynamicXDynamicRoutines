@@ -17,7 +17,7 @@ namespace VRAMMap
 ;AXY->8 bit
 ;Input: 
 ;   VRAMMapTMP_Size
-;Devuelve el mejor espacio en Y (8-bit)
+;Devuelve el mejor espacio en X (8-bit)
 GetBestSlot:
     LDX.b #!VRAMMAP_SIZE-1 ;byte i = VRAMMAP_SIZE - 1;
     LDY.b #$00

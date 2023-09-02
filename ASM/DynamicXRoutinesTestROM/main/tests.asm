@@ -81,5 +81,6 @@ LoopMain:
 	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTests2)
 	%HacerTest(VRAMMapSlotTests_TestGetSize,VRAMMapSlotTests3)
 	%HacerTest(VRAMMapSlotTests_TestGetSizeAndScore,VRAMMapSlotTests4)
+	%HacerTest(VRAMMapTests_TestGetBestSlot,VRAMMapTests_TestGetBestSlot_returnStr)
 Terminado:
 JML Terminado
