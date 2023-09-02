@@ -8,5 +8,5 @@ DynamicPoseHashmapSlotTests_TestGetHashCode:
     +
 RTL
 
-SlotTestsRet0: db "Test SlotTests: Pasado",$00
-SlotTestsRet1: db "Test SlotTests: Fallado",$00
+SlotTestsRetP: db "Test SlotTests: Pasado",$00
+SlotTestsRetF: db "Test SlotTests: Fallado",$00

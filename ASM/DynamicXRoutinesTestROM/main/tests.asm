@@ -40,6 +40,6 @@ endmacro
 
 LoopMain:
     ;Pone tus weas aqui
-	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsRet0, SlotTestsRet1)
+	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsRetP, SlotTestsRetF)
 Terminado:
 JML Terminado
