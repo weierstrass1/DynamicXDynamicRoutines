@@ -79,8 +79,9 @@ LoopMain:
 	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsStrings)
 	%HacerTest(VRAMMapSlotTests_TestIsRestricted, VRAMMapSlotTests1)
 	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTests2)
-	%HacerTest(VRAMMapSlotTests_TestGetSize,VRAMMapSlotTests3)
-	%HacerTest(VRAMMapSlotTests_TestGetSizeAndScore,VRAMMapSlotTests4)
-	%HacerTest(VRAMMapTests_TestGetBestSlot,VRAMMapTests_TestGetBestSlot_returnStr)
+	%HacerTest(VRAMMapSlotTests_TestGetSize, VRAMMapSlotTests3)
+	%HacerTest(VRAMMapSlotTests_TestGetSizeAndScore, VRAMMapSlotTests4)
+	%HacerTest(VRAMMapTests_TestGetBestSlot, VRAMMapTests_TestGetBestSlot_returnStr)
+	%HacerTest(VRAMMapTests_TestAddPoseInSpace, VRAMMapTests_TestAddPoseInSpace_returnStr)
 Terminado:
 JML Terminado
