@@ -38,6 +38,8 @@ endmacro
 ;   A is score
 ;   VRAMMapSlot_Size is size
 VRAMMapSlot_GetSizeAndScore:
+    LDA #$00
+    XBA
     %VRAMMapSlot_IsFree()       ;if (IsFree)
     BEQ .IsNotFree
 
@@ -50,12 +52,14 @@ VRAMMapSlot_GetSizeAndScore:
 .IsNotFree
 
     PHX
+    REP #$30
     ASL
     TAX
 
     LDA.l DX_Dynamic_Pose_ID,X  ;DynamicPoseHashMapSlot poseslot = hashmap.Get(SizeOrPose);
     TAY
 
+    SEP #$20
     LDA.w Pose16x16Blocks,y
     STA.b VRAMMapSlot_Size      ;return poseDataBase.Get(poseslot.ID).blocks16x16;
 
@@ -64,7 +68,7 @@ VRAMMapSlot_GetSizeAndScore:
     SEC
     SBC DX_Dynamic_Pose_TimeLastUse,x
     CMP #$00FF
-    SEP #$20
+    SEP #$30
     BCC .NoCap
     LDA #$FE
 .NoCap                          ;return (byte)Math.Min(TimeSpan - Hashmap.Get(SizeOrPose).TimeLastUse, 0xFE);
@@ -84,6 +88,8 @@ VRAMMapSlot_GetSizeAndScore:
 ;   A is size
 macro VRAMMapSlot_GetSize()
 ?GetSize:
+    LDA #$00
+    XBA
     %VRAMMapSlot_IsFree()       ;if (IsFree)
     BEQ ?.IsNotFree
 
@@ -94,14 +100,16 @@ macro VRAMMapSlot_GetSize()
 ?.IsNotFree
 
     PHX
+    REP #$30
     ASL
     TAX
 
     LDA.l DX_Dynamic_Pose_ID,X  ;DynamicPoseHashMapSlot poseslot = hashmap.Get(SizeOrPose);
     TAY
+    SEP #$20
 
     LDA.w Pose16x16Blocks,y     ;return poseDataBase.Get(poseslot.ID).blocks16x16;
-
+    SEP #$10
     PLX
 ?.finish
 endmacro
