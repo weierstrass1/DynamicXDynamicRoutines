@@ -93,6 +93,53 @@ RTL
 .assert2: db "TestGetBestSlot: Assert 2",$00
 .assert3: db "TestGetBestSlot: Assert 3",$00
 
+;TestRemoveSpace
+VRAMMapTests_TestRemoveSpace:
+	STZ.B TEST_STATUS
+
+	;vramMap.AddPoseInSpace(0, new()
+	LDA.B #$00 : STA.B HashIndexBackup
+	LDA.B #$00 : STA.B VRAMMapBestSpace_Offset
+	LDA.B #!VRAMMAP_SIZE : STA.B VRAMMapBestSpace_Size
+	%CallFunctionLongShortDBG(VRAMMap_AddPoseInSpace)
+
+	LDA.B #$00 : STA.B HashIndexBackup
+	LDA.B #$00 : STA.B VRAMMapBestSpace_Offset
+	LDA.B #!VRAMMAP_SIZE : STA.B VRAMMapBestSpace_Size
+	%CallFunctionLongShortDBG(VRAMMap_RemoveSpace)
+
+	;get(vrammapsize-1)
+	LDX.B #!VRAMMAP_SIZE-1
+	LDA.B DX_Dynamic_Tile_Offset,X : BEQ +
+		LDA.B #$01 : STA.B TEST_STATUS : RTL
+	+
+	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
+		LDA.B #$02 : STA.B TEST_STATUS : RTL
+	+
+
+	;get(0)
+	LDX.B #$00
+	LDA.B DX_Dynamic_Tile_Offset,X : BEQ +
+		LDA.B #$02 : STA.B TEST_STATUS : RTL
+	+
+	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
+		LDA.B #$03 : STA.B TEST_STATUS : RTL
+	+
+RTL
+
+.returnStr
+	dl .suceso
+	dl .assert1
+	dl .assert2
+	dl .assert3
+	dl .assert4
+
+.suceso: db "TestRemoveSpace: Pasado",$00
+.assert1: db "TestRemoveSpace: Assert 1",$00
+.assert2: db "TestRemoveSpace: Assert 2",$00
+.assert3: db "TestRemoveSpace: Assert 3",$00
+.assert4: db "TestRemoveSpace: Assert 4",$00
+
 ;TestAddPoseInSpace
 VRAMMapTests_TestAddPoseInSpace:
 	STZ.B TEST_STATUS
