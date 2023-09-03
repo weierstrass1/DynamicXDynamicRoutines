@@ -60,8 +60,13 @@ CLEAR_DYNAMIC_POSE_SPACE:
 			STA.L DX_Dynamic_Pose_ID+!i
 			!i #= !i+2
 		endif
+		LDA.W #$0000
+		!i = 0
+		while !i < 128
+    		STA.l DX_Dynamic_Pose_HashSize+!i
+			!i #= !i+2
+		endif
 	SEP #$30
     LDA.b #$00
     STA.l DX_Dynamic_Pose_Length
-    STA.l DX_Dynamic_Pose_HashSize
 RTL
