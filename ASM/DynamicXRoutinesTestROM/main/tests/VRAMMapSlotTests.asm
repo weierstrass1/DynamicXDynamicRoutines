@@ -79,6 +79,8 @@ VRAMMapSlotTests_TestGetSize:
     ;VRAMMapSlot slot = new() Offset = 0, SizeOrPose = 0,
     LDX.B #$00
     LDA.B #$00
+    STZ.b PoseIDBackup
+    STZ.b PoseIDBackup+1
     STA.L DX_Dynamic_Tile_Offset,X
     STA.L DX_Dynamic_Tile_Size,X
     ;hashmap.Add(0, new(0, 0, 0));
@@ -142,6 +144,8 @@ VRAMMapSlotTests_TestGetSizeAndScore:
     STZ.B TEST_STATUS
     ;VRAMMapSlot slot = new() Offset = 0, SizeOrPose = 0,
     LDX.B #$00
+    STZ.b PoseIDBackup
+    STZ.b PoseIDBackup+1
     LDA.B #$00
     STA.l DX_Timer+1
     STA.L DX_Dynamic_Tile_Offset,X

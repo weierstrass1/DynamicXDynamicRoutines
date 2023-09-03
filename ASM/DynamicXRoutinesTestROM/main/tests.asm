@@ -69,11 +69,17 @@ TextoCrash: db "Crasheado!",$00
 LoopMain:
     ;Pone tus weas aqui
 	JSL CLEAR_DYNAMIC_POSE_SPACE
-	%HacerTest(DynamicPoseHashmapSlotTests_TestGetHashCode, SlotTestsStrings)
+	;HashmapTests
+	%HacerTest(DynamicPoseHashmap_TestAdd,DynamicPoseHashmap_Test1)
+	JSL CLEAR_DYNAMIC_POSE_SPACE
+	%HacerTest(DynamicPoseHashmap_TestRemove,DynamicPoseHashmap_Test2)
+	JSL CLEAR_DYNAMIC_POSE_SPACE
+	;VRAMMapSlotTests
 	%HacerTest(VRAMMapSlotTests_TestIsRestricted, VRAMMapSlotTests1)
 	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTests2)
 	%HacerTest(VRAMMapSlotTests_TestGetSize, VRAMMapSlotTests3)
 	%HacerTest(VRAMMapSlotTests_TestGetSizeAndScore, VRAMMapSlotTests4)
+	;VRAMMapTests
 	%HacerTest(VRAMMapTests_TestGetBestSlot, VRAMMapTests_TestGetBestSlot_returnStr)
 	JSL CLEAR_DYNAMIC_POSE_SPACE
 	%HacerTest(VRAMMapTests_TestRemoveSpace, VRAMMapTests_TestRemoveSpace_returnStr)

@@ -29,6 +29,8 @@ VRAMMapTests_TestGetBestSlot:
 .p1
 	;vramMap.Hashmap.Add(0, new(0, 0x40, 10));
 	LDX.b #$00
+    STZ.b PoseIDBackup
+    STZ.b PoseIDBackup+1
 	LDA.B #$40 : STA.l DX_Dynamic_Pose_Offset,x
 	LDA.B #10 : STA.L DX_Timer
 	LDA.B #0 : STA.L DX_Timer+1
@@ -47,6 +49,8 @@ VRAMMapTests_TestGetBestSlot:
 .p2
 	;vramMap.Hashmap.Add(1, new(0, 0x60, 20));
 	LDX.b #$01
+    STZ.b PoseIDBackup
+    STZ.b PoseIDBackup+1
 	LDA.B #$60 : STA.l DX_Dynamic_Pose_Offset,x
 	LDA.B #20 : STA.L DX_Timer
 	LDA.B #0 : STA.L DX_Timer+1
@@ -119,7 +123,6 @@ RTL
 VRAMMapTests_TestRemoveSpace:
 	STZ.B TEST_STATUS
 
-	LDA.l $3EDEAD
 	LDX.B #$00
 	LDA.B #$80 : STA.L DX_Dynamic_Tile_Offset,X
 	LDA.B #$7F|$80 : STA.L DX_Dynamic_Tile_Size,X
@@ -131,6 +134,8 @@ VRAMMapTests_TestRemoveSpace:
 	LDY #$00 : LDA.w Pose16x16Blocks,y : STA.b VRAMMapTMP_Size
 
 	LDX.b #$00
+    STZ.b PoseIDBackup
+    STZ.b PoseIDBackup+1
 	LDA.B #$00 : STA.l DX_Dynamic_Pose_Offset,x
 	LDA.B #$00 : STA.L DX_Timer
 	LDA.B #$00 : STA.L DX_Timer+1
