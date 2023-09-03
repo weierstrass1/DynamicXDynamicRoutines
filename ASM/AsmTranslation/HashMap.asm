@@ -18,6 +18,7 @@ FindPose:
 		STY.w PoseIDBackup : TYA : AND.b #!HASHMAP_SIZE-1
 	SEP #$10 ;XY -> 8
 	STA.b HashCodeBackup : STA.b HashIndexBackup
+	TAX
 
 	LDA.l DX_Dynamic_Pose_Length : BEQ .ReturnFalseCarryClear ;if (Length == 0) return false
 	LDA.l DX_Dynamic_Pose_HashSize,X : BEQ .ReturnFalseCarryClear ;if (hashSize[hashCode]) return false
