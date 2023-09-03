@@ -93,11 +93,55 @@ RTL
 .assert2: db "TestGetBestSlot: Assert 2",$00
 .assert3: db "TestGetBestSlot: Assert 3",$00
 
+;public void TestRemoveSpace()
+;{
+;	VRAMMap vramMap = startVRAMMap();
+;	vramMap.AddPoseInSpace(0, new()
+;	{
+;		Offset = 0,
+;		Score = 0,
+;		Size = VRAMMap.VRAMMAP_SIZE
+;	});
+;	vramMap.RemoveSpace(new()
+;	{
+;		Offset = 0,
+;		Score = 0,
+;		Size = VRAMMap.VRAMMAP_SIZE
+;	});
+;	VRAMMapSlot endSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
+;	Assert.AreEqual(endSlot1.Offset, 0);
+;	Assert.AreEqual(endSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
+;	VRAMMapSlot endSlot2 = vramMap.Get(0);
+;	Assert.AreEqual(endSlot2.Offset, 0);
+;	Assert.AreEqual(endSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 1) | 0x80);
+;}
 ;TestRemoveSpace
 VRAMMapTests_TestRemoveSpace:
 	STZ.B TEST_STATUS
 
-	;vramMap.AddPoseInSpace(0, new()
+	LDA.l $3EDEAD
+	LDX.B #$00
+	LDA.B #$80 : STA.L DX_Dynamic_Tile_Offset,X
+	LDA.B #$7F|$80 : STA.L DX_Dynamic_Tile_Size,X
+
+	LDX.B #$7F
+	LDA.B #$80 : STA.L DX_Dynamic_Tile_Offset,X
+	LDA.B #$7F|$80 : STA.L DX_Dynamic_Tile_Size,X
+
+	LDY #$00 : LDA.w Pose16x16Blocks,y : STA.b VRAMMapTMP_Size
+
+	LDX.b #$00
+	LDA.B #$00 : STA.l DX_Dynamic_Pose_Offset,x
+	LDA.B #$00 : STA.L DX_Timer
+	LDA.B #$00 : STA.L DX_Timer+1
+	%CallFunctionLongShortDBG(DynamicPoseHashmap_Add)
+
+;	vramMap.AddPoseInSpace(0, new()
+;	{
+;		Offset = 0,
+;		Score = 0,
+;		Size = VRAMMap.VRAMMAP_SIZE
+;	});
 	LDA.B #$00 : STA.B HashIndexBackup
 	LDA.B #$00 : STA.B VRAMMapBestSpace_Offset
 	LDA.B #!VRAMMAP_SIZE : STA.B VRAMMapBestSpace_Size
@@ -110,19 +154,19 @@ VRAMMapTests_TestRemoveSpace:
 
 	;get(vrammapsize-1)
 	LDX.B #!VRAMMAP_SIZE-1
-	LDA.B DX_Dynamic_Tile_Offset,X : BEQ +
+	LDA.l DX_Dynamic_Tile_Offset,X : BEQ +
 		LDA.B #$01 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
+	LDA.l DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
 		LDA.B #$02 : STA.B TEST_STATUS : RTL
 	+
 
 	;get(0)
 	LDX.B #$00
-	LDA.B DX_Dynamic_Tile_Offset,X : BEQ +
+	LDA.l DX_Dynamic_Tile_Offset,X : BEQ +
 		LDA.B #$02 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
+	LDA.l DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-1)|$80 : BEQ +
 		LDA.B #$03 : STA.B TEST_STATUS : RTL
 	+
 RTL
@@ -140,9 +184,38 @@ RTL
 .assert3: db "TestRemoveSpace: Assert 3",$00
 .assert4: db "TestRemoveSpace: Assert 4",$00
 
+;public void TestAddPoseInSpace()
+;{
+;	VRAMMap vramMap = startVRAMMap();
+;	vramMap.AddPoseInSpace(0, new()
+;	{
+;		Offset = 0,
+;		Score = 0,
+;		Size = VRAMMap.VRAMMAP_SIZE
+;	});
+;	VRAMMapSlot endSlot1 = vramMap.Get(VRAMMap.VRAMMAP_SIZE - 1);
+;	Assert.AreEqual(endSlot1.Offset, 1);
+;	Assert.AreEqual(endSlot1.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
+;	VRAMMapSlot endSlot2 = vramMap.Get(1);
+;	Assert.AreEqual(endSlot2.Offset, 1);
+;	Assert.AreEqual(endSlot2.SizeOrPose, (VRAMMap.VRAMMAP_SIZE - 2) | 0x80);
+;	VRAMMapSlot startSlot = vramMap.Get(0);
+;	Assert.AreEqual(startSlot.Offset, 0);
+;	Assert.AreEqual(startSlot.SizeOrPose, 0);
+;}
 ;TestAddPoseInSpace
 VRAMMapTests_TestAddPoseInSpace:
 	STZ.B TEST_STATUS
+
+	LDX.B #$00
+	LDA.B #$80 : STA.L DX_Dynamic_Tile_Offset,X
+	LDA.B #$7F|$80 : STA.L DX_Dynamic_Tile_Size,X
+
+	LDX.B #$7F
+	LDA.B #$80 : STA.L DX_Dynamic_Tile_Offset,X
+	LDA.B #$7F|$80 : STA.L DX_Dynamic_Tile_Size,X
+
+	LDY #$00 : LDA.w Pose16x16Blocks,y : STA.b VRAMMapTMP_Size
 
 	;vramMap.AddPoseInSpace(0, new()
 	LDA.B #$00 : STA.B HashIndexBackup
@@ -152,28 +225,28 @@ VRAMMapTests_TestAddPoseInSpace:
 
 	;get(vrammapsize-1)
 	LDX.B #!VRAMMAP_SIZE-1
-	LDA.B DX_Dynamic_Tile_Offset,X : CMP.B #$01 : BEQ +
+	LDA.l DX_Dynamic_Tile_Offset,X : CMP.B #$01 : BEQ +
 		LDA.B #$01 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-2)|$80 : BEQ +
+	LDA.l DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-2)|$80 : BEQ +
 		LDA.B #$02 : STA.B TEST_STATUS : RTL
 	+
 
 	;get(1)
 	LDX.B #$01
-	LDA.B DX_Dynamic_Tile_Offset,X : CMP.B #$01 : BEQ +
+	LDA.l DX_Dynamic_Tile_Offset,X : CMP.B #$01 : BEQ +
 		LDA.B #$03 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-2)|$80 : BEQ +
+	LDA.l DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-2)|$80 : BEQ +
 		LDA.B #$04 : STA.B TEST_STATUS : RTL
 	+
 
 	;get(0)
 	LDX.B #$00
-	LDA.B DX_Dynamic_Tile_Offset,X : CMP.B #$00 : BEQ +
+	LDA.l DX_Dynamic_Tile_Offset,X : CMP.B #$00 : BEQ +
 		LDA.B #$05 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B DX_Dynamic_Tile_Size,X : BEQ +
+	LDA.l DX_Dynamic_Tile_Size,X : BEQ +
 		LDA.B #$06 : STA.B TEST_STATUS : RTL
 	+
 RTL
