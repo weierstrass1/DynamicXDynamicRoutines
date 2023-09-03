@@ -66,6 +66,7 @@ VRAMMapTests_TestGetBestSlot:
 	LDA.B #$20 : STA.B VRAMMapBestSpace_Size
 	%CallFunctionLongShortDBG(VRAMMap_AddPoseInSpace)
 
+	LDA $3EDEAD
 	;vramMap.GetBestSlot(0x20, 30);
 	LDA.B #$20
 	STA.b VRAMMapTMP_Size

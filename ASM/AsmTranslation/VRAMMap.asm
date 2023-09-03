@@ -87,7 +87,7 @@ checkSpace:
         ;slotSize += current.Size;
         LDA.l VRAMMapCurrentSpace_Size : CLC : ADC.b VRAMMapSlot_Size : STA.b VRAMMapSlot_Size
         ;Math.Min(score, current.Score);
-        LDA.l VRAMMapSlot_Score : CMP.b VRAMMapCurrentSpace_Score : BCS + 
+        LDA.l VRAMMapSlot_Score : CMP.b VRAMMapCurrentSpace_Score : BCC + 
             LDA.b VRAMMapCurrentSpace_Score
             STA.b VRAMMapSlot_Score
     +
