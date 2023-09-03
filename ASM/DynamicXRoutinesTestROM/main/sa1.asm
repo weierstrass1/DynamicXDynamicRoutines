@@ -61,4 +61,7 @@ CLEAR_DYNAMIC_POSE_SPACE:
 			!i #= !i+2
 		endif
 	SEP #$30
+    LDA.b #$00
+    STA.l DX_Dynamic_Pose_Length
+    STA.l DX_Dynamic_Pose_HashSize
 RTL
