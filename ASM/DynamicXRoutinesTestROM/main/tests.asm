@@ -85,5 +85,7 @@ LoopMain:
 	%HacerTest(VRAMMapTests_TestRemoveSpace, VRAMMapTests_TestRemoveSpace_returnStr)
 	JSL CLEAR_DYNAMIC_POSE_SPACE
 	%HacerTest(VRAMMapTests_TestAddPoseInSpace, VRAMMapTests_TestAddPoseInSpace_returnStr)
+	JSL CLEAR_DYNAMIC_POSE_SPACE
+	%HacerTest(VRAMMapTests_TestRemovePosesInSpace, VRAMMapTests_TestRemovePosesInSpace_returnStr)
 Terminado:
 JML Terminado
