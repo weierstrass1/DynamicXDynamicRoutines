@@ -44,7 +44,7 @@ namespace DX
 			Length: skip 1
 			HashSize: skip !HASHMAP_SIZE ;Elements with same hash value
 			Offset: skip !HASHMAP_SIZE ;VRAM Offset of the Pose
-			TimeLastUse: skip !HASHMAP_SIZE ;SNES Frames since the last time that the pose was used
+			TimeLastUse: skip !HASHMAP_SIZE*2 ;SNES Frames since the last time that the pose was used
 			ID: skip !HASHMAP_SIZE*2 ;Current Pose ID that was loaded to VRAM
 		namespace off
 	namespace off

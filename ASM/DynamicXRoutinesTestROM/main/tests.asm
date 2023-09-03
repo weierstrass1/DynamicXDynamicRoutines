@@ -74,6 +74,8 @@ LoopMain:
 	JSL CLEAR_DYNAMIC_POSE_SPACE
 	%HacerTest(DynamicPoseHashmap_TestRemove,DynamicPoseHashmap_Test2)
 	JSL CLEAR_DYNAMIC_POSE_SPACE
+	%HacerTest(DynamicPoseHashmap_TestFindFreeSpace,DynamicPoseHashmap_Test3)
+	JSL CLEAR_DYNAMIC_POSE_SPACE
 	;VRAMMapSlotTests
 	%HacerTest(VRAMMapSlotTests_TestIsRestricted, VRAMMapSlotTests1)
 	%HacerTest(VRAMMapSlotTests_TestIsFree, VRAMMapSlotTests2)
