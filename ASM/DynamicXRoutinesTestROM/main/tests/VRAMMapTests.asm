@@ -71,13 +71,13 @@ VRAMMapTests_TestGetBestSlot:
 	STA.l DX_Timer+1
 	%CallFunctionLongShortDBG(VRAMMap_GetBestSlot)
 
-	LDA.B VRAMMapBestSpace_Offset : CMP.B #$40 : BNE +
+	LDA.B VRAMMapBestSpace_Offset : CMP.B #$40 : BEQ +
 		LDA.B #$01 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B VRAMMapBestSpace_Size : CMP.B #$20 : BNE +
+	LDA.B VRAMMapBestSpace_Size : CMP.B #$20 : BEQ +
 		LDA.B #$02 : STA.B TEST_STATUS : RTL
 	+
-	LDA.B VRAMMapBestSpace_Score : CMP.B #20 : BNE +
+	LDA.B VRAMMapBestSpace_Score : CMP.B #20 : BEQ +
 		LDA.B #$03 : STA.B TEST_STATUS : RTL
 	+
 RTL
