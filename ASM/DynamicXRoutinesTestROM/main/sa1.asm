@@ -34,14 +34,7 @@ SA1_READYSTAT:
 -		STA.L $400000,X
 		STA.L $410000,X
 		INX #2 : BNE -
-
-		LDA.W #$FFFF
-		!i = 0
-		while !i < 256
-			STA.L DX_Dynamic_Pose_ID+!i
-			!i #= !i+2
-		endif
-	SEP #$30
+	JSL CLEAR_DYNAMIC_POSE_SPACE
 
 	INC.B SA1_READY
 SA1_LOOP:
@@ -58,3 +51,14 @@ SA1_IRQ:
 
 CALL_SA1_FUNCTION:
 JML.W [SA1_CALLFUNC_PTR]
+
+CLEAR_DYNAMIC_POSE_SPACE:
+	REP #$30
+		LDA.W #$FFFF
+		!i = 0
+		while !i < 256
+			STA.L DX_Dynamic_Pose_ID+!i
+			!i #= !i+2
+		endif
+	SEP #$30
+RTL
