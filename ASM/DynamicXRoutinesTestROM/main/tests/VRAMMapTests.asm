@@ -239,6 +239,72 @@ VRAMMapTests_TestRemovePosesInSpace:
 	LDA.l DX_Dynamic_Tile_Size,X : CMP.B #(!VRAMMAP_SIZE-4)|$80 : BEQ +
 	LDA.B #$0A : STA.B TEST_STATUS : RTL
 	+
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID
+	CMP #$FFFF
+	SEP #$20
+	BNE +
+	LDA.B #$0B : STA.B TEST_STATUS : RTL
++
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID+2
+	CMP.w #$FFFF
+	SEP #$20
+	BNE +
+	LDA.B #$0C : STA.B TEST_STATUS : RTL
++
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID+4
+	CMP.w #$FFFF
+	SEP #$20
+	BNE +
+	LDA.B #$0D : STA.B TEST_STATUS : RTL
++
+	LDA.l DX_Dynamic_Pose_Length
+	CMP.b #$03
+	BEQ +
+	LDA.B #$0E : STA.B TEST_STATUS : RTL
++
+	LDA.l DX_Dynamic_Pose_HashSize
+	CMP.b #$03
+	BEQ +
+	LDA.B #$0F : STA.B TEST_STATUS : RTL
++
+	LDA.B #$01 : STA.B VRAMMapBestSpace_Offset
+	LDA.B #!VRAMMAP_SIZE-1 : STA.B VRAMMapBestSpace_Size
+	%CallFunctionLongShortDBG(VRAMMap_RemovePosesInSpace)
+
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID
+	CMP.w #$FFFF
+	SEP #$20
+	BNE +
+	LDA.B #$10 : STA.B TEST_STATUS : RTL
++
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID+2
+	CMP.w #$FFFF
+	SEP #$20
+	BEQ +
+	LDA.B #$11 : STA.B TEST_STATUS : RTL
++
+	REP #$20
+	LDA.l DX_Dynamic_Pose_ID+4
+	CMP.w #$FFFF
+	SEP #$20
+	BEQ +
+	LDA.B #$12 : STA.B TEST_STATUS : RTL
++
+	LDA.l DX_Dynamic_Pose_Length
+	CMP.b #$01
+	BEQ +
+	LDA.B #$13 : STA.B TEST_STATUS : RTL
++
+	LDA.l DX_Dynamic_Pose_HashSize
+	CMP.b #$01
+	BEQ +
+	LDA.B #$14 : STA.B TEST_STATUS : RTL
++
 RTL
 
 .returnStr
